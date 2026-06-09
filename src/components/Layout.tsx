@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { auth } from '../lib/firebase';
-import { LogOut, LayoutDashboard, User, Home, Download } from 'lucide-react';
+import { LogOut, LayoutDashboard, User, Home, Download, Facebook } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, isAdmin } = useAuth();
@@ -22,7 +22,7 @@ export const Navbar: React.FC = () => {
               <Download className="text-white w-5 h-5" />
             </div>
             <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Premium Hub
+              FAST BD
             </span>
           </Link>
 
@@ -65,22 +65,39 @@ export const Footer: React.FC = () => {
   return (
     <footer className="bg-gray-50 border-t border-gray-100 mt-20 py-12">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <div className="flex justify-center items-center gap-2 mb-6">
+        <div className="flex justify-center items-center gap-2 mb-4">
           <div className="bg-blue-600 p-1.5 rounded-md">
             <Download className="text-white w-4 h-4" />
           </div>
-          <span className="text-lg font-bold text-gray-900 line-through decoration-blue-500/30">Premium Hub</span>
+          <span className="text-lg font-black text-gray-900 tracking-tighter">FAST BD</span>
         </div>
-        <p className="text-gray-500 text-sm max-w-md mx-auto">
+        <p className="text-gray-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">
           The ultimate source for premium quality downloads and resources. Safe, secure, and fast.
         </p>
-        <div className="flex justify-center gap-6 mt-8">
-          <a href="#" className="text-gray-400 hover:text-blue-600 transition">Terms</a>
-          <a href="#" className="text-gray-400 hover:text-blue-600 transition">Privacy</a>
-          <a href="#" className="text-gray-400 hover:text-blue-600 transition">Contact</a>
+        
+        <div className="flex flex-col items-center gap-4 py-8 border-y border-gray-200/50 mb-8">
+          <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Developed By</span>
+          <div className="flex items-center gap-4">
+             <span className="text-gray-900 font-bold text-lg">Tamim Hasan</span>
+             <a 
+               href="https://www.facebook.com/share/18hoWUC59f/" 
+               target="_blank" 
+               rel="noopener noreferrer"
+               className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition shadow-lg shadow-blue-100"
+             >
+               <Facebook size={18} />
+             </a>
+          </div>
         </div>
-        <div className="border-t border-gray-200 mt-8 pt-8 text-gray-400 text-xs">
-          © 2026 Premium Download Hub. All rights reserved.
+
+        <div className="flex justify-center gap-8 text-sm font-bold text-gray-400">
+          <a href="#" className="hover:text-blue-600 transition">TERMS</a>
+          <a href="#" className="hover:text-blue-600 transition">PRIVACY</a>
+          <a href="#" className="hover:text-blue-600 transition">REPORTS</a>
+        </div>
+        
+        <div className="mt-12 text-gray-400 text-[10px] font-medium tracking-widest uppercase">
+          © 2026 FAST BD. ALL RIGHTS RESERVED.
         </div>
       </div>
     </footer>

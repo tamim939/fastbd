@@ -1,6 +1,6 @@
 {
-  "name": "Premium Download Hub",
-  "description": "A high-end download portal with an advanced admin panel, user authentication, and optimized ad placement.",
+  "name": "FAST BD",
+  "description": "Fast and premium resource download hub.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

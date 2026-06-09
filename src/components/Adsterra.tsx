@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 export const PopunderAd: React.FC = () => {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://pl29643981.effectivecpmnetwork.com/14/be/50/14be508055d2633b584e81cbfa6c7ba3.js';
+    script.src = 'https://pl29693490.effectivecpmnetwork.com/1c/21/1a/1c211a76f000bbd2f3bbe2b7d695896e.js';
     script.async = true;
     document.body.appendChild(script);
     return () => {
@@ -16,7 +16,7 @@ export const PopunderAd: React.FC = () => {
 export const SocialBarAd: React.FC = () => {
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://pl29644139.effectivecpmnetwork.com/42/68/d0/4268d09a821b96a77aaa9ba2879dedc2.js';
+    script.src = 'https://pl29693495.effectivecpmnetwork.com/8e/60/b2/8e60b2310585cb3ae7dd6084ee06d251.js';
     script.async = true;
     document.body.appendChild(script);
   }, []);
@@ -31,10 +31,10 @@ export const BannerAd: React.FC = () => {
       atOptionsScript.type = 'text/javascript';
       atOptionsScript.innerHTML = `
         atOptions = {
-          'key' : 'f4e1d50b2abb189aa2df615906b360ff',
+          'key' : 'b4af71e52314f97d8cae6b05b7315210',
           'format' : 'iframe',
-          'height' : 90,
-          'width' : 728,
+          'height' : 60,
+          'width' : 468,
           'params' : {}
         };
       `;
@@ -42,7 +42,7 @@ export const BannerAd: React.FC = () => {
 
       const invokeScript = document.createElement('script');
       invokeScript.type = 'text/javascript';
-      invokeScript.src = 'https://www.highperformanceformat.com/f4e1d50b2abb189aa2df615906b360ff/invoke.js';
+      invokeScript.src = 'https://www.highperformanceformat.com/b4af71e52314f97d8cae6b05b7315210/invoke.js';
       container.appendChild(invokeScript);
     }
   }, []);

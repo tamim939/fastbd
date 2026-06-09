@@ -90,9 +90,10 @@ const PostDetail: React.FC = () => {
             </div>
           </div>
 
-          <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-8 tracking-tight leading-tight uppercase">
+          <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight leading-tight uppercase">
             {post.title}
           </h1>
+          <p className="text-blue-600 font-black text-[10px] uppercase tracking-[0.3em] mb-8">Fast BD • Premium Content</p>
 
           <div className="prose prose-blue max-w-none text-gray-600 text-lg leading-relaxed mb-12 whitespace-pre-line">
             {post.description}
