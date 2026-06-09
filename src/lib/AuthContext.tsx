@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from './firebase';
 import { UserProfile } from '../types';
 
@@ -26,29 +26,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let unsubProfile: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
       if (user) {
-        const path = `users/${user.uid}`;
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
+        // Use onSnapshot for real-time profile updates
+        unsubProfile = onSnapshot(doc(db, 'users', user.uid), (docSnap) => {
           if (docSnap.exists()) {
-            const profileData = docSnap.data() as UserProfile;
-            setProfile(profileData);
+            setProfile(docSnap.data() as UserProfile);
           } else {
             setProfile(null);
           }
-        } catch (error) {
-          handleFirestoreError(error, OperationType.GET, path);
-        }
+          setLoading(false);
+        }, (error) => {
+          console.error("Profile listen error:", error);
+          setLoading(false);
+        });
       } else {
+        if (unsubProfile) unsubProfile();
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+      if (unsubProfile) unsubProfile();
+    };
   }, []);
 
   const adminEmails = ['rsjonayed07@gmail.com', 'rsjonayed0766@gmail.com'];

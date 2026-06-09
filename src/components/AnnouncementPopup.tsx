@@ -40,51 +40,55 @@ export const AnnouncementPopup: React.FC<PopupProps> = ({ config }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={handleClose}
-            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
           />
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+            initial={{ opacity: 0, scale: 0.9, y: 30 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="relative bg-white w-full max-w-sm rounded-[40px] overflow-hidden shadow-2xl shadow-blue-500/20"
+            exit={{ opacity: 0, scale: 0.9, y: 30 }}
+            className="relative bg-white w-full max-w-sm rounded-[40px] overflow-hidden shadow-2xl"
           >
-            <div className="relative aspect-[4/5]">
+            {/* Image on Top */}
+            <div className="relative w-full aspect-video bg-gray-100">
               <img 
-                src={config.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop'} 
+                src={config.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
                 className="w-full h-full object-cover"
                 alt="Update"
               />
               <button 
                 onClick={handleClose}
-                className="absolute top-4 right-4 bg-black/20 backdrop-blur-md text-white p-2 rounded-xl hover:bg-black/40 transition-colors"
+                className="absolute top-4 right-4 bg-black/40 text-white p-2 rounded-full hover:bg-black/60 transition-colors"
+                title="Close"
               >
-                <X size={20} />
+                <X size={18} />
               </button>
-              <div className="absolute inset-0 bg-gradient-to-t from-white via-white/20 to-transparent" />
             </div>
 
-            <div className="p-8 text-center -mt-16 relative z-10">
-              <span className="inline-block bg-blue-600 text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-4 shadow-lg shadow-blue-200">
-                New Announcement
-              </span>
-              <h3 className="text-2xl font-black text-gray-900 tracking-tighter mb-6 leading-tight uppercase">
-                {config.title}
-              </h3>
+            {/* Content Below Image */}
+            <div className="p-8 text-center bg-white">
+              <div className="mb-6">
+                <span className="inline-block bg-blue-600/10 text-blue-600 text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full mb-3">
+                  Official Update
+                </span>
+                <h3 className="text-2xl font-black text-gray-900 tracking-tighter uppercase leading-tight">
+                  {config.title}
+                </h3>
+              </div>
               
               <div className="flex flex-col gap-3">
                 <a 
                   href={config.telegramLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-blue-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 hover:bg-blue-700 active:scale-95 transition-all"
+                  className="flex items-center justify-center gap-2 bg-[#229ED9] text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 hover:brightness-110 active:scale-95 transition-all"
                 >
-                  <Send size={16} /> Join Telegram
+                  <Send size={16} /> Join Telegram Channel
                 </a>
                 <button 
                   onClick={handleClose}
-                  className="py-4 text-gray-400 font-bold text-xs uppercase tracking-widest hover:text-gray-900 transition-colors"
+                  className="py-4 text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] hover:text-gray-900 transition-colors"
                 >
-                  Maybe Later
+                  Close Announcement
                 </button>
               </div>
             </div>

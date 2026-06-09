@@ -28,16 +28,19 @@ const PostDetail: React.FC = () => {
     fetchPost();
   }, [id]);
 
-  const handleDownloadClick = async () => {
+  const handleDownloadClick = async (e: React.MouseEvent) => {
+    if (!user) {
+      e.preventDefault();
+      navigate('/register');
+      return;
+    }
     if (!id || !post) return;
     try {
       const docRef = doc(db, 'posts', id);
       await updateDoc(docRef, { views: increment(1) });
       
-      if (user) {
-        const userRef = doc(db, 'users', user.uid);
-        await updateDoc(userRef, { downloadCount: increment(1) });
-      }
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, { downloadCount: increment(1) });
 
       setPost(prev => prev ? { ...prev, views: (prev.views || 0) + 1 } : null);
     } catch (err) {
