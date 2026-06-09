@@ -14,9 +14,9 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
+    <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-14 md:h-20 items-center">
+        <div className="flex justify-between h-14 md:h-16 items-center">
           <Link to="/" className="flex items-center gap-2 group">
             <div className="bg-blue-600 p-1.5 md:p-2 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-blue-200">
               <Download className="text-white w-4 h-4 md:w-5 md:h-5" />

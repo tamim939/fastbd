@@ -30,7 +30,24 @@ const Login: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      await signInWithPopup(auth, googleProvider);
+      const { user } = await signInWithPopup(auth, googleProvider);
+      
+      // Upsert profile on login as well to ensure it exists
+      const { doc, setDoc, serverTimestamp } = await import('firebase/firestore');
+      const { db } = await import('../lib/firebase');
+      
+      const adminEmails = ['rsjonayed07@gmail.com', 'rsjonayed0766@gmail.com'];
+      const isOwner = user.email && adminEmails.includes(user.email);
+      
+      await setDoc(doc(db, 'users', user.uid), {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || 'User',
+        photoURL: user.photoURL,
+        role: isOwner ? 'admin' : 'user',
+        lastLogin: serverTimestamp()
+      }, { merge: true });
+
       navigate('/');
     } catch (err: any) {
       setError(err.message);
