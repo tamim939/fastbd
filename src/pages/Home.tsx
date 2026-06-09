@@ -59,26 +59,28 @@ const Home: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 py-4 md:py-8">
       {/* Visual Identity Hero */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-12"
+        className="mb-6 md:mb-12"
       >
         <ImageSlider images={settings?.sliderImages || []} />
         <NoticeBoard notice={settings?.notice || ''} />
       </motion.div>
 
       {/* Ad Space */}
-      <BannerAd />
+      <div className="my-6 md:my-10">
+        <BannerAd />
+      </div>
 
       {/* Main Content Area */}
-      <div className="mt-12 bg-gray-50/50 rounded-3xl p-6 md:p-10 border border-gray-100">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-6">
+      <div className="mt-8 md:mt-12 bg-gray-50/50 rounded-[28px] md:rounded-[48px] p-5 md:p-12 border border-gray-100">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-12 gap-6">
           <div>
-            <h2 className="text-3xl font-black text-gray-900 tracking-tight">Explore Resources</h2>
-            <p className="text-gray-500 font-medium mt-1">Discover premium tools, assets, and software.</p>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">Explore Resources</h2>
+            <p className="text-gray-400 font-bold mt-1 text-xs md:text-sm">Premium quality downloads and tools</p>
           </div>
           
           <div className="relative group w-full md:w-80">

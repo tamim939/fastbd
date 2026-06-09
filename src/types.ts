@@ -17,9 +17,14 @@ export interface Category {
   slug: string;
 }
 
+export interface SliderImage {
+  url: string;
+  link: string;
+}
+
 export interface AppSettings {
   notice: string;
-  sliderImages: string[];
+  sliderImages: SliderImage[];
 }
 
 export interface UserProfile {

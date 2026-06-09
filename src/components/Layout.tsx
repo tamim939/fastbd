@@ -16,42 +16,40 @@ export const Navbar: React.FC = () => {
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-14 md:h-20 items-center">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="bg-blue-600 p-2 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-blue-200">
-              <Download className="text-white w-5 h-5" />
+            <div className="bg-blue-600 p-1.5 md:p-2 rounded-lg group-hover:rotate-12 transition-transform shadow-lg shadow-blue-200">
+              <Download className="text-white w-4 h-4 md:w-5 md:h-5" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            <span className="text-lg md:text-2xl font-black tracking-tighter bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent uppercase">
               FAST BD
             </span>
           </Link>
 
-          <div className="flex items-center gap-4">
-            <Link to="/" className="text-gray-600 hover:text-blue-600 font-medium hidden md:block">Home</Link>
-            
+          <div className="flex items-center gap-2 md:gap-4">
             {user ? (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
                 {isAdmin && (
                   <Link 
                     to="/admin" 
-                    className="flex items-center gap-1 text-gray-700 hover:text-blue-600 font-medium px-3 py-2 rounded-lg hover:bg-blue-50 transition"
+                    className="flex items-center gap-1.5 text-gray-700 hover:text-blue-600 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl hover:bg-blue-50 transition border border-transparent hover:border-blue-100"
                   >
-                    <LayoutDashboard size={18} />
+                    <LayoutDashboard size={14} className="md:w-[18px] md:h-[18px]" />
                     <span className="hidden sm:inline">Admin</span>
                   </Link>
                 )}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-1 text-red-600 hover:bg-red-50 font-medium px-3 py-2 rounded-lg transition"
+                  className="flex items-center gap-1.5 text-red-600 hover:bg-red-50 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl transition border border-transparent hover:border-red-100"
                 >
-                  <LogOut size={18} />
+                  <LogOut size={14} className="md:w-[18px] md:h-[18px]" />
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
-                <Link to="/login" className="text-gray-600 hover:text-blue-600 font-medium px-4 py-2">Login</Link>
-                <Link to="/register" className="bg-blue-600 text-white font-medium px-5 py-2 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-100 transition">Register</Link>
+              <div className="flex items-center gap-1 md:gap-3">
+                <Link to="/login" className="text-gray-900 font-bold text-xs uppercase tracking-widest px-4 py-2 hover:text-blue-600 transition">Login</Link>
+                <Link to="/register" className="bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest px-4 md:px-6 py-2.5 rounded-xl hover:bg-blue-700 shadow-xl shadow-blue-100 transition whitespace-nowrap">Join Now</Link>
               </div>
             )}
           </div>
@@ -63,41 +61,45 @@ export const Navbar: React.FC = () => {
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-50 border-t border-gray-100 mt-20 py-12">
+    <footer className="bg-gray-50 border-t border-gray-100 mt-12 md:mt-24 py-16">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <div className="flex justify-center items-center gap-2 mb-4">
-          <div className="bg-blue-600 p-1.5 rounded-md">
-            <Download className="text-white w-4 h-4" />
-          </div>
-          <span className="text-lg font-black text-gray-900 tracking-tighter">FAST BD</span>
+        <div className="flex flex-col items-center gap-6 mb-12">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="bg-blue-600 p-1.5 rounded-lg">
+              <Download className="text-white w-4 h-4" />
+            </div>
+            <span className="text-xl font-black text-gray-900 tracking-tighter uppercase">FAST BD</span>
+          </Link>
+          <p className="text-gray-400 text-xs md:text-sm max-w-sm font-medium leading-relaxed">
+            Premium quality digital resources hub. Fast, secure, and always updated for the community.
+          </p>
         </div>
-        <p className="text-gray-500 text-sm max-w-sm mx-auto mb-6 leading-relaxed">
-          The ultimate source for premium quality downloads and resources. Safe, secure, and fast.
-        </p>
         
-        <div className="flex flex-col items-center gap-4 py-8 border-y border-gray-200/50 mb-8">
-          <span className="text-xs font-black text-gray-400 uppercase tracking-widest">Developed By</span>
-          <div className="flex items-center gap-4">
-             <span className="text-gray-900 font-bold text-lg">Tamim Hasan</span>
-             <a 
-               href="https://www.facebook.com/share/18hoWUC59f/" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               className="bg-blue-600 p-2 rounded-full text-white hover:scale-110 transition shadow-lg shadow-blue-100"
-             >
-               <Facebook size={18} />
-             </a>
+        <div className="py-10 border-y border-gray-200/60 mb-10">
+          <div className="flex flex-col items-center gap-4">
+             <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Design & Architecture</span>
+             <div className="flex items-center gap-4">
+               <span className="text-gray-900 font-extrabold text-xl tracking-tight">Tamim Hasan</span>
+               <a 
+                 href="https://www.facebook.com/share/18hoWUC59f/" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="bg-blue-600 p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
+               >
+                 <Facebook size={20} />
+               </a>
+             </div>
           </div>
         </div>
 
-        <div className="flex justify-center gap-8 text-sm font-bold text-gray-400">
-          <a href="#" className="hover:text-blue-600 transition">TERMS</a>
-          <a href="#" className="hover:text-blue-600 transition">PRIVACY</a>
-          <a href="#" className="hover:text-blue-600 transition">REPORTS</a>
+        <div className="flex justify-center gap-8 text-[10px] font-black text-gray-400 tracking-widest uppercase">
+          <a href="#" className="hover:text-blue-600 transition">Terms</a>
+          <a href="#" className="hover:text-blue-600 transition">Privacy</a>
+          <a href="#" className="hover:text-blue-600 transition">Support</a>
         </div>
         
-        <div className="mt-12 text-gray-400 text-[10px] font-medium tracking-widest uppercase">
-          © 2026 FAST BD. ALL RIGHTS RESERVED.
+        <div className="mt-12 text-gray-400 text-[9px] font-bold tracking-[0.2em] uppercase opacity-60">
+          © {new Date().getFullYear()} FAST BD • Built for Performance
         </div>
       </div>
     </footer>

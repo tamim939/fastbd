@@ -290,7 +290,7 @@ const CategoriesPanel: React.FC<{ categories: Category[] }> = ({ categories }) =
 };
 
 const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave: any }> = ({ settings, setSettings, onSave }) => {
-  const [newUrl, setNewUrl] = useState('');
+  const [newSlide, setNewSlide] = useState({ url: '', link: '' });
   return (
     <form onSubmit={onSave} className="max-w-4xl">
       <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">UI ARCHITECTURE</h3>
@@ -301,15 +301,21 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
         </div>
         <div className="space-y-6">
           <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Carousel Assets</label>
-          <div className="flex gap-4">
-            <input type="url" placeholder="Direct Image URL" className="flex-1 bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm transition" value={newUrl} onChange={e => setNewUrl(e.target.value)} />
-            <button type="button" onClick={() => { if(newUrl){ setSettings({...settings, sliderImages: [...settings.sliderImages, newUrl]}); setNewUrl(''); } }} className="bg-gray-100 text-gray-900 px-8 rounded-2xl font-black tracking-widest text-[10px] uppercase hover:bg-gray-200 transition">PUSH</button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="url" placeholder="Direct Image URL" className="bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm transition" value={newSlide.url} onChange={e => setNewSlide({...newSlide, url: e.target.value})} />
+            <div className="flex gap-4">
+              <input type="url" placeholder="Redirect Link (Optional)" className="flex-1 bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm transition" value={newSlide.link} onChange={e => setNewSlide({...newSlide, link: e.target.value})} />
+              <button type="button" onClick={() => { if(newSlide.url){ setSettings({...settings, sliderImages: [...settings.sliderImages, newSlide]}); setNewSlide({ url: '', link: '' }); } }} className="bg-gray-100 text-gray-900 px-8 rounded-2xl font-black tracking-widest text-[10px] uppercase hover:bg-gray-200 transition">PUSH</button>
+            </div>
           </div>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {settings.sliderImages.map((url, i) => (
-              <div key={i} className="relative group aspect-video rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
-                <img src={url} className="w-full h-full object-cover" />
-                <button type="button" onClick={() => setSettings({...settings, sliderImages: settings.sliderImages.filter((_, idx) => idx !== i)})} className="absolute top-4 right-4 bg-red-600 text-white p-2.5 rounded-xl opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all"><Trash2 size={18} /></button>
+            {settings.sliderImages.map((slide, i) => (
+              <div key={i} className="relative group aspect-video rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100">
+                <img src={slide.url} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center p-4">
+                   <p className="text-white text-[10px] font-bold text-center break-all line-clamp-2">{slide.link || 'No Redirect'}</p>
+                </div>
+                <button type="button" onClick={() => setSettings({...settings, sliderImages: settings.sliderImages.filter((_, idx) => idx !== i)})} className="absolute top-4 right-4 bg-red-600/80 backdrop-blur-md text-white p-2.5 rounded-xl opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all z-10"><Trash2 size={18} /></button>
               </div>
             ))}
           </div>
