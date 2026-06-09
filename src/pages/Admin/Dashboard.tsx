@@ -46,6 +46,7 @@ const AdminDashboard: React.FC = () => {
         const data = doc.data() as AppSettings;
         setSettings({
           ...data,
+          sliderImages: data.sliderImages || [],
           popup: data.popup || { isEnabled: false, title: '', imageUrl: '', telegramLink: '' }
         });
       }
@@ -62,14 +63,19 @@ const AdminDashboard: React.FC = () => {
     return () => { unsubPosts(); unsubCats(); unsubSettings(); unsubUsers(); unsubGlobalStats(); };
   }, [isAdmin]);
 
+  const [publishing, setPublishing] = useState(false);
+
   const handleSaveSettings = async (e: React.FormEvent) => {
     e.preventDefault();
+    setPublishing(true);
     try {
       await setDoc(doc(db, 'settings', 'general'), settings);
-      setSuccess('Settings updated successfully!');
+      setSuccess('All changes published to users!');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err: any) {
       handleFirestoreError(err, OperationType.WRITE, 'settings/general');
+    } finally {
+      setPublishing(false);
     }
   };
 
@@ -119,7 +125,7 @@ const AdminDashboard: React.FC = () => {
             {activeTab === 'stats' && <StatsPanel posts={posts} users={users} globalVisitors={globalStats.totalVisitors} />}
             {activeTab === 'posts' && <PostsPanel posts={posts} categories={categories} />}
             {activeTab === 'categories' && <CategoriesPanel categories={categories} />}
-            {activeTab === 'settings' && <SettingsPanel settings={settings} setSettings={setSettings} onSave={handleSaveSettings} />}
+            {activeTab === 'settings' && <SettingsPanel settings={settings} setSettings={setSettings} onSave={handleSaveSettings} publishing={publishing} />}
             {activeTab === 'users' && <UsersPanel users={users} />}
           </div>
         </main>
@@ -339,7 +345,7 @@ const CategoriesPanel: React.FC<{ categories: Category[] }> = ({ categories }) =
   );
 };
 
-const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave: any }> = ({ settings, setSettings, onSave }) => {
+const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave: any, publishing: boolean }> = ({ settings, setSettings, onSave, publishing }) => {
   const [newSlide, setNewSlide] = useState({ url: '', link: '' });
 
   const handleFileUpload = (type: 'slider' | 'popup', e: React.ChangeEvent<HTMLInputElement>) => {
@@ -441,13 +447,24 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
                 <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Step 1: Upload or URL</label>
                 <div className="space-y-4">
                   <label className="w-full flex flex-col items-center justify-center gap-3 bg-white border-2 border-dashed border-gray-200 py-8 rounded-[32px] cursor-pointer hover:border-blue-500 hover:bg-blue-50/10 transition-all group">
-                    <div className="bg-gray-50 p-4 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                      <Camera size={24} className="text-gray-400 group-hover:text-white" />
-                    </div>
-                    <div className="text-center px-4">
-                      <span className="block text-sm font-bold text-gray-900 uppercase tracking-tight">Pick from Gallery</span>
-                      <span className="text-[10px] font-medium text-gray-400">JPG, PNG, WEBP (Max 2MB)</span>
-                    </div>
+                    {newSlide.url ? (
+                      <div className="relative w-full aspect-video px-4">
+                        <img src={newSlide.url} className="w-full h-full object-cover rounded-2xl shadow-lg" alt="Preview" />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-2xl">
+                          <ImageIcon className="text-white" size={32} />
+                        </div>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="bg-gray-50 p-4 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                          <Camera size={24} className="text-gray-400 group-hover:text-white" />
+                        </div>
+                        <div className="text-center px-4">
+                          <span className="block text-sm font-bold text-gray-900 uppercase tracking-tight">Pick from Gallery</span>
+                          <span className="text-[10px] font-medium text-gray-400">JPG, PNG, WEBP (Max 2MB)</span>
+                        </div>
+                      </>
+                    )}
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('slider', e)} />
                   </label>
                   
@@ -502,7 +519,14 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
           </div>
         </div>
 
-        <button type="submit" className="w-full bg-blue-600 text-white font-black py-6 rounded-[24px] shadow-2xl shadow-blue-100 uppercase tracking-[0.2em] text-xs hover:bg-blue-700 active:scale-[0.98] transition-all">Publish Global Updates</button>
+        <button 
+          type="submit" 
+          disabled={publishing}
+          className={`w-full bg-blue-600 text-white font-black py-6 rounded-[24px] shadow-2xl shadow-blue-100 uppercase tracking-[0.2em] text-xs hover:bg-blue-700 active:scale-[0.98] transition-all flex items-center justify-center gap-2 ${publishing ? 'opacity-70 cursor-not-allowed' : ''}`}
+        >
+          {publishing ? <Loader2 className="animate-spin" size={18} /> : null}
+          {publishing ? 'Synchronizing with Live Server...' : 'Publish Global Updates'}
+        </button>
       </div>
     </form>
   );
