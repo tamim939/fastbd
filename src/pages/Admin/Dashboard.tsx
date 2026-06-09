@@ -20,6 +20,7 @@ const AdminDashboard: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [settings, setSettings] = useState<AppSettings>({ notice: '', sliderImages: [] });
   const [users, setUsers] = useState<UserProfile[]>([]);
+  const [globalStats, setGlobalStats] = useState({ totalVisitors: 0 });
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
@@ -44,7 +45,11 @@ const AdminDashboard: React.FC = () => {
       setUsers(snap.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile)));
     }, (err) => handleFirestoreError(err, OperationType.LIST, 'users'));
 
-    return () => { unsubPosts(); unsubCats(); unsubSettings(); unsubUsers(); };
+    const unsubGlobalStats = onSnapshot(doc(db, 'stats', 'global'), (doc) => {
+      if (doc.exists()) setGlobalStats(doc.data() as any);
+    });
+
+    return () => { unsubPosts(); unsubCats(); unsubSettings(); unsubUsers(); unsubGlobalStats(); };
   }, [isAdmin]);
 
   const handleSaveSettings = async (e: React.FormEvent) => {
@@ -101,7 +106,7 @@ const AdminDashboard: React.FC = () => {
           )}
 
           <div className="bg-white rounded-[40px] border border-gray-100 p-8 md:p-12 shadow-sm min-h-[700px]">
-            {activeTab === 'stats' && <StatsPanel posts={posts} users={users} />}
+            {activeTab === 'stats' && <StatsPanel posts={posts} users={users} globalVisitors={globalStats.totalVisitors} />}
             {activeTab === 'posts' && <PostsPanel posts={posts} categories={categories} />}
             {activeTab === 'categories' && <CategoriesPanel categories={categories} />}
             {activeTab === 'settings' && <SettingsPanel settings={settings} setSettings={setSettings} onSave={handleSaveSettings} />}
@@ -113,13 +118,20 @@ const AdminDashboard: React.FC = () => {
   );
 };
 
-const StatsPanel: React.FC<{ posts: Post[], users: UserProfile[] }> = ({ posts, users }) => {
+const StatsPanel: React.FC<{ posts: Post[], users: UserProfile[], globalVisitors: number }> = ({ posts, users, globalVisitors }) => {
   const totalViews = posts.reduce((acc, p) => acc + (p.views || 0), 0);
   const topPost = [...posts].sort((a, b) => (b.views || 0) - (a.views || 0))[0];
 
   return (
     <div className="space-y-12">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-indigo-50 p-8 rounded-[32px] border border-indigo-100">
+          <div className="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-200">
+            <Eye size={24} />
+          </div>
+          <p className="text-indigo-900/60 font-black uppercase text-[10px] tracking-widest mb-1">Total Visitors</p>
+          <h4 className="text-4xl font-black text-indigo-900 tracking-tighter">{globalVisitors}</h4>
+        </div>
         <div className="bg-blue-50 p-8 rounded-[32px] border border-blue-100">
           <div className="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-200">
             <TrendingUp size={24} />

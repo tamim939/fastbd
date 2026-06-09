@@ -20,13 +20,23 @@ const PostDetail: React.FC = () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         setPost({ id: docSnap.id, ...docSnap.data() } as Post);
-        // Increment views
-        await updateDoc(docRef, { views: increment(1) });
       }
       setLoading(false);
     };
     fetchPost();
   }, [id]);
+
+  const handleDownloadClick = async () => {
+    if (!id || !post) return;
+    try {
+      const docRef = doc(db, 'posts', id);
+      await updateDoc(docRef, { views: increment(1) });
+      // Update local state to show updated views
+      setPost(prev => prev ? { ...prev, views: (prev.views || 0) + 1 } : null);
+    } catch (err) {
+      console.error('Failed to increment views:', err);
+    }
+  };
 
   if (loading) {
     return (
@@ -108,6 +118,7 @@ const PostDetail: React.FC = () => {
               
               <a
                 href={post.downloadLink}
+                onClick={handleDownloadClick}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-3 bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
