@@ -1,0 +1,93 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.email == "rsjonayed07@gmail.com"
+      );
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Entity Validations ---
+
+    function isValidPost(data) {
+      return data.keys().hasAll(['title', 'imageUrl', 'description', 'downloadLink', 'category', 'createdAt', 'authorId']) &&
+             data.keys().size() <= 9 && // Including optional 'views', 'updatedAt'
+             data.title is string && data.title.size() <= 255 &&
+             data.imageUrl is string && data.imageUrl.size() <= 1024 &&
+             data.description is string && data.description.size() <= 10000 &&
+             data.downloadLink is string && data.downloadLink.size() <= 1024 &&
+             data.category is string && data.category.size() <= 100 &&
+             data.authorId == request.auth.uid &&
+             data.createdAt == request.time;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['email', 'role', 'joinedAt']) &&
+             data.keys().size() <= 5 &&
+             data.email == request.auth.token.email &&
+             data.role in ['user', 'admin'] &&
+             data.joinedAt is timestamp;
+    }
+
+    // --- Collection Matches ---
+
+    match /posts/{postId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidPost(incoming());
+      allow update: if isAdmin() && isValidPost(incoming()) && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'imageUrl', 'description', 'downloadLink', 'category', 'updatedAt', 'views'])
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && (
+        incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL'])
+      );
+    }
+
+    match /admins/{userId} {
+      allow read: if isAdmin();
+      allow write: if false; // System bootstrap or Console only
+    }
+  }
+}
