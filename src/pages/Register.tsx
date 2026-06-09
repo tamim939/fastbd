@@ -23,11 +23,13 @@ const Register: React.FC = () => {
       await updateProfile(user, { displayName: name });
       
       // Create profile in Firestore
+      const adminEmails = ['rsjonayed07@gmail.com', 'rsjonayed0766@gmail.com'];
+      const isOwner = user.email && adminEmails.includes(user.email);
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
         displayName: name,
-        role: 'user',
+        role: isOwner ? 'admin' : 'user',
         joinedAt: serverTimestamp()
       });
 
@@ -46,12 +48,14 @@ const Register: React.FC = () => {
       const { user } = await signInWithPopup(auth, googleProvider);
       
       // Upsert profile
+      const adminEmails = ['rsjonayed07@gmail.com', 'rsjonayed0766@gmail.com'];
+      const isOwner = user.email && adminEmails.includes(user.email);
       await setDoc(doc(db, 'users', user.uid), {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || 'User',
         photoURL: user.photoURL,
-        role: 'user',
+        role: isOwner ? 'admin' : 'user',
         joinedAt: serverTimestamp()
       }, { merge: true });
 
