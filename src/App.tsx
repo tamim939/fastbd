@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import { Navbar, Footer } from './components/Layout';
-import { PopunderAd, SocialBarAd } from './components/Adsterra';
+import { PopunderAd, SocialBarAd, BannerAd } from './components/Adsterra';
 
 // Pages
 import Home from './pages/Home';
@@ -29,6 +29,10 @@ const AppContent: React.FC = () => {
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
+
+      <div className="flex justify-center py-6 bg-gray-50/30 border-y border-gray-100">
+        <BannerAd />
+      </div>
 
       <Footer />
 
