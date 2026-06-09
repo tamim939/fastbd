@@ -34,6 +34,9 @@ export const ImageSlider: React.FC<SliderProps> = ({ images }) => {
           <motion.img
             key={index}
             src={currentSlider.url}
+            onError={(e) => {
+              e.currentTarget.src = 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000';
+            }}
             initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}

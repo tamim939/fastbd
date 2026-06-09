@@ -348,25 +348,6 @@ const CategoriesPanel: React.FC<{ categories: Category[] }> = ({ categories }) =
 const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave: any, publishing: boolean }> = ({ settings, setSettings, onSave, publishing }) => {
   const [newSlide, setNewSlide] = useState({ url: '', link: '' });
 
-  const handleFileUpload = (type: 'slider' | 'popup', e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        if (type === 'slider') {
-          setNewSlide({ ...newSlide, url: result });
-        } else if (type === 'popup') {
-          setSettings({
-            ...settings,
-            popup: { ...settings.popup!, imageUrl: result }
-          });
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   return (
     <form onSubmit={onSave} className="max-w-4xl">
       <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">UI ARCHITECTURE</h3>
@@ -419,16 +400,22 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Visual</label>
-              <div className="relative group aspect-video rounded-3xl overflow-hidden bg-white border border-blue-100/50">
-                <img 
-                  src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
-                  className="w-full h-full object-cover"
+              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Visual Image Link</label>
+              <div className="space-y-3">
+                <input 
+                  type="url" 
+                  className="w-full bg-white border border-blue-100/50 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm"
+                  value={settings.popup?.imageUrl}
+                  onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
+                  placeholder="https://example.com/popup-image.jpg"
                 />
-                <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                  <Camera className="text-white" />
-                  <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
-                </label>
+                <div className="relative group aspect-video rounded-3xl overflow-hidden bg-white border border-blue-100/50 shadow-sm">
+                  <img 
+                    src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
+                    className="w-full h-full object-cover"
+                    alt="Popup Preview"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -438,84 +425,87 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
         <div className="space-y-6">
           <div className="flex items-center justify-between mb-2">
             <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Hero Slider Configuration</label>
-            <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">Auto-Rotate Enabled</span>
+            <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase">Live Sync Active</span>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50/50 p-8 rounded-[40px] border border-gray-100">
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Step 1: Upload or URL</label>
-                <div className="space-y-4">
-                  <label className="w-full flex flex-col items-center justify-center gap-3 bg-white border-2 border-dashed border-gray-200 py-8 rounded-[32px] cursor-pointer hover:border-blue-500 hover:bg-blue-50/10 transition-all group">
-                    {newSlide.url ? (
-                      <div className="relative w-full aspect-video px-4">
-                        <img src={newSlide.url} className="w-full h-full object-cover rounded-2xl shadow-lg" alt="Preview" />
-                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-2xl">
-                          <ImageIcon className="text-white" size={32} />
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="bg-gray-50 p-4 rounded-2xl group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                          <Camera size={24} className="text-gray-400 group-hover:text-white" />
-                        </div>
-                        <div className="text-center px-4">
-                          <span className="block text-sm font-bold text-gray-900 uppercase tracking-tight">Pick from Gallery</span>
-                          <span className="text-[10px] font-medium text-gray-400">JPG, PNG, WEBP (Max 2MB)</span>
-                        </div>
-                      </>
-                    )}
-                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('slider', e)} />
-                  </label>
-                  
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200"></div></div>
-                    <div className="relative flex justify-center text-[10px] uppercase font-black"><span className="bg-gray-50 px-4 text-gray-300">Or Paste Image URL</span></div>
-                  </div>
-
-                  <input type="url" placeholder="https://example.com/image.jpg" className="w-full bg-white border border-gray-100 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" value={newSlide.url} onChange={e => setNewSlide({...newSlide, url: e.target.value})} />
+          <div className="bg-gray-50/50 p-8 rounded-[40px] border border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 border-b border-gray-100 pb-8">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Slide Image Link</label>
+                <div className="relative group">
+                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
+                  <input 
+                    type="url" 
+                    placeholder="https://example.com/slide1.jpg" 
+                    className="w-full bg-white border border-gray-100 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" 
+                    value={newSlide.url} 
+                    onChange={e => setNewSlide({...newSlide, url: e.target.value})} 
+                  />
                 </div>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Step 2: Add Destination Link</label>
-                <div className="bg-white p-6 rounded-[32px] border border-gray-100 space-y-4">
-                  <div className="relative group">
-                    <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
-                    <input type="url" placeholder="https://t.me/example" className="w-full bg-gray-50 border border-gray-100 p-4 pl-12 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm transition" value={newSlide.link} onChange={e => setNewSlide({...newSlide, link: e.target.value})} />
+                {newSlide.url && (
+                  <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+                    <img src={newSlide.url} className="w-full h-full object-cover" alt="Preview" onError={(e) => (e.currentTarget.style.display = 'none')} />
                   </div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Target URL for this slide (Optional)</p>
-                </div>
+                )}
               </div>
 
-              <div className="flex flex-col gap-4">
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Target Destination (Optional)</label>
+                <div className="relative group">
+                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
+                  <input 
+                    type="url" 
+                    placeholder="https://t.me/your_channel" 
+                    className="w-full bg-white border border-gray-100 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" 
+                    value={newSlide.link} 
+                    onChange={e => setNewSlide({...newSlide, link: e.target.value})} 
+                  />
+                </div>
                 <button 
                   type="button" 
                   disabled={!newSlide.url}
-                  onClick={() => { if(newSlide.url){ setSettings({...settings, sliderImages: [...settings.sliderImages, newSlide]}); setNewSlide({ url: '', link: '' }); } }} 
+                  onClick={() => { 
+                    if(newSlide.url){ 
+                      setSettings({
+                        ...settings, 
+                        sliderImages: [...(settings.sliderImages || []), newSlide]
+                      }); 
+                      setNewSlide({ url: '', link: '' }); 
+                    } 
+                  }} 
                   className={`w-full py-5 rounded-2xl font-black tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl ${newSlide.url ? 'bg-blue-600 text-white shadow-blue-100 hover:bg-blue-700 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'}`}
                 >
-                  Confirm & Add to Slider
+                  ADD TO STACK
                 </button>
               </div>
             </div>
-          </div>
-          
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-            {settings.sliderImages.map((slide, i) => (
-              <div key={i} className="relative group aspect-video rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100">
-                <img src={slide.url} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-6">
-                   <div className="space-y-1">
-                      <span className="text-[9px] font-black text-blue-400 uppercase tracking-widest">Active Link</span>
-                      <p className="text-white text-[10px] font-bold truncate opacity-80">{slide.link || 'Internal Route'}</p>
-                   </div>
-                </div>
-                <button type="button" onClick={() => setSettings({...settings, sliderImages: settings.sliderImages.filter((_, idx) => idx !== i)})} className="absolute top-4 right-4 bg-red-500 text-white p-2.5 rounded-xl opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 transition-all z-10 shadow-lg"><Trash2 size={18} /></button>
+
+            <div className="space-y-4">
+              <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Current Active Slides ({settings.sliderImages?.length || 0})</label>
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {settings.sliderImages?.map((slide, i) => (
+                  <div key={i} className="relative group aspect-video rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100">
+                    <img src={slide.url} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500" />
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-center items-center p-3 text-center">
+                       <p className="text-white text-[8px] font-bold truncate w-full mb-2">{slide.link || 'Internal Link'}</p>
+                       <button 
+                        type="button" 
+                        onClick={() => setSettings({...settings, sliderImages: settings.sliderImages.filter((_, idx) => idx !== i)})} 
+                        className="bg-red-500 text-white p-2 rounded-xl hover:scale-110 active:scale-95 transition-all shadow-lg"
+                       >
+                        <Trash2 size={14} />
+                       </button>
+                    </div>
+                  </div>
+                ))}
+                {(!settings.sliderImages || settings.sliderImages.length === 0) && (
+                  <div className="col-span-full py-12 flex flex-col items-center justify-center bg-white border border-dashed border-gray-200 rounded-[32px]">
+                    <ImageIcon className="text-gray-200 mb-2" size={32} />
+                    <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest">No active slides</p>
+                  </div>
+                )}
               </div>
-            ))}
+            </div>
           </div>
         </div>
 
