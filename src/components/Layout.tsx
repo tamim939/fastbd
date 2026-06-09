@@ -29,6 +29,16 @@ export const Navbar: React.FC = () => {
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
               <div className="flex items-center gap-2 md:gap-3">
+                <Link 
+                  to="/profile" 
+                  className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-blue-600/5 border border-blue-100 flex items-center justify-center font-black text-blue-600 text-xs hover:bg-blue-600 hover:text-white transition-all shadow-sm overflow-hidden"
+                >
+                  {user.photoURL ? (
+                    <img src={user.photoURL} alt="P" className="w-full h-full object-cover" />
+                  ) : (
+                    user.displayName?.[0] || 'U'
+                  )}
+                </Link>
                 {isAdmin && (
                   <Link 
                     to="/admin" 
@@ -75,30 +85,28 @@ export const Footer: React.FC = () => {
           </p>
         </div>
         
-        <div className="py-10 border-y border-gray-200/60 mb-10">
-          <div className="flex flex-col items-center gap-4">
-             <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Design & Architecture</span>
-             <div className="flex items-center gap-4">
-               <span className="text-gray-900 font-extrabold text-xl tracking-tight">Tamim Hasan</span>
-               <a 
-                 href="https://www.facebook.com/share/18hoWUC59f/" 
-                 target="_blank" 
-                 rel="noopener noreferrer"
-                 className="bg-blue-600 p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
-               >
-                 <Facebook size={20} />
-               </a>
-             </div>
+        <div className="py-10 border-y border-gray-200/60 mb-10 flex flex-col items-center gap-4">
+          <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Design & Architecture</span>
+          <div className="flex items-center gap-4">
+            <span className="text-gray-900 font-extrabold text-xl tracking-tight">Tamim Hasan (Developer)</span>
+            <a 
+              href="https://www.facebook.com/share/18hoWUC59f/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-blue-600 p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
+            >
+              <Facebook size={20} />
+            </a>
           </div>
         </div>
 
-        <div className="flex justify-center gap-8 text-[10px] font-black text-gray-400 tracking-widest uppercase">
+        <div className="flex justify-center gap-8 text-[10px] font-black text-gray-400 tracking-widest uppercase mb-12">
           <a href="#" className="hover:text-blue-600 transition">Terms</a>
           <a href="#" className="hover:text-blue-600 transition">Privacy</a>
           <a href="#" className="hover:text-blue-600 transition">Support</a>
         </div>
         
-        <div className="mt-12 text-gray-400 text-[9px] font-bold tracking-[0.2em] uppercase opacity-60">
+        <div className="text-gray-400 text-[9px] font-bold tracking-[0.2em] uppercase opacity-60">
           © {new Date().getFullYear()} FAST BD • Built for Performance
         </div>
       </div>

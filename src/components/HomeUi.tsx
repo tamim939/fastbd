@@ -23,7 +23,7 @@ export const ImageSlider: React.FC<SliderProps> = ({ images }) => {
   const currentSlider = images[index];
 
   return (
-    <div className="relative w-full h-[220px] md:h-[400px] overflow-hidden rounded-[24px] md:rounded-[40px] shadow-2xl mt-4 group">
+    <div className="relative w-full h-[180px] md:h-[280px] overflow-hidden rounded-[24px] md:rounded-[40px] shadow-2xl mt-4 group">
       <a 
         href={currentSlider.link || '#'} 
         target="_blank" 

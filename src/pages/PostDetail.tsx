@@ -3,12 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Post } from '../types';
+import { useAuth } from '../lib/AuthContext';
 import { BannerAd } from '../components/Adsterra';
 import { motion } from 'motion/react';
 import { Download, Calendar, Tag, ArrowLeft, Share2, Eye, ShieldCheck, Loader2 } from 'lucide-react';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const { user } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -31,7 +33,12 @@ const PostDetail: React.FC = () => {
     try {
       const docRef = doc(db, 'posts', id);
       await updateDoc(docRef, { views: increment(1) });
-      // Update local state to show updated views
+      
+      if (user) {
+        const userRef = doc(db, 'users', user.uid);
+        await updateDoc(userRef, { downloadCount: increment(1) });
+      }
+
       setPost(prev => prev ? { ...prev, views: (prev.views || 0) + 1 } : null);
     } catch (err) {
       console.error('Failed to increment views:', err);

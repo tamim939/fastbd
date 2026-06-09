@@ -4,6 +4,7 @@ import { db, handleFirestoreError, OperationType } from '../lib/firebase';
 import { Post, Category, AppSettings } from '../types';
 import { ImageSlider, NoticeBoard } from '../components/HomeUi';
 import { CategoryList, PostCard } from '../components/ContentUi';
+import { AnnouncementPopup } from '../components/AnnouncementPopup';
 import { BannerAd } from '../components/Adsterra';
 import { motion } from 'motion/react';
 import { Search, Loader2 } from 'lucide-react';
@@ -60,6 +61,7 @@ const Home: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-4 md:py-8">
+      <AnnouncementPopup config={settings?.popup} />
       {/* Visual Identity Hero */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}

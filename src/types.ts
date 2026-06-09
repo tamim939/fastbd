@@ -25,6 +25,12 @@ export interface SliderImage {
 export interface AppSettings {
   notice: string;
   sliderImages: SliderImage[];
+  popup?: {
+    isEnabled: boolean;
+    title: string;
+    imageUrl: string;
+    telegramLink: string;
+  };
 }
 
 export interface UserProfile {
@@ -34,4 +40,6 @@ export interface UserProfile {
   photoURL?: string;
   role: 'admin' | 'user';
   joinedAt: any;
+  downloadCount?: number;
+  bio?: string;
 }

@@ -30,6 +30,13 @@
     @apply text-gray-900 bg-white overflow-x-hidden;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
+  ::selection {
+    @apply bg-blue-100 text-blue-900;
+  }
+}
+
+.shadow-premium {
+  box-shadow: 0 20px 40px -10px rgba(59, 130, 246, 0.05);
 }
 
 .prose {

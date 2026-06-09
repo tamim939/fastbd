@@ -12,6 +12,7 @@ import PostDetail from './pages/PostDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/Admin/Dashboard';
+import Profile from './pages/Profile';
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -54,6 +55,7 @@ const AppContent: React.FC = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </main>
