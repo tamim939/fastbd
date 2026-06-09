@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../lib/AuthContext';
 import { auth } from '../lib/firebase';
-import { LogOut, LayoutDashboard, User, Home, Download, Facebook } from 'lucide-react';
+import { LogOut, LayoutDashboard, User, Home, Download, Facebook, Send } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { user, profile, isAdmin } = useAuth();
@@ -87,15 +87,25 @@ export const Footer: React.FC = () => {
         
           <div className="flex flex-col items-center gap-4">
             <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em]">Design & Architecture</span>
-            <div className="flex items-center gap-4">
-              <span className="text-gray-900 font-extrabold text-xl tracking-tight">Tamim Hasan (Developer)</span>
+            <span className="text-gray-900 font-extrabold text-xl tracking-tight">Developer: Tamim Hasan</span>
+            <div className="flex gap-3 mb-10">
               <a 
                 href="https://www.facebook.com/share/18hoWUC59f/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="bg-blue-600 p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
+                className="bg-[#1877F2] p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
+                title="Facebook"
               >
                 <Facebook size={20} />
+              </a>
+              <a 
+                href="https://t.me/Tamim_Hasan10" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-[#229ED9] p-2.5 rounded-2xl text-white hover:scale-110 active:scale-95 transition-all shadow-xl shadow-blue-100"
+                title="Telegram"
+              >
+                <Send size={20} />
               </a>
             </div>
           </div>
