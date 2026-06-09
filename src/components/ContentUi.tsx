@@ -68,14 +68,10 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
         </div>
 
         <Link to={`/post/${post.id}`}>
-          <h3 className="text-lg md:text-xl font-black text-gray-900 group-hover:text-blue-600 transition mb-3 line-clamp-2 leading-tight tracking-tight uppercase">
+          <h3 className="text-lg md:text-xl font-black text-gray-900 group-hover:text-blue-600 transition mb-6 line-clamp-2 leading-tight tracking-tight uppercase">
             {post.title}
           </h3>
         </Link>
-        
-        <p className="text-gray-500 text-xs md:text-sm line-clamp-2 mb-6 h-10 leading-relaxed font-medium">
-          {post.description}
-        </p>
 
         <div className="flex items-center justify-between border-t border-gray-50 pt-5 md:pt-8">
           <div className="flex items-center gap-2">
