@@ -119,24 +119,28 @@ const PostDetail: React.FC = () => {
             {post.description}
           </div>
 
-          <div className="bg-blue-50/50 rounded-3xl p-8 border border-blue-100/50">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="text-center md:text-left">
-                <h3 className="text-xl font-bold text-blue-900 mb-2">Ready to download?</h3>
-                <p className="text-blue-700/60 font-medium">Click the button below to start your download.</p>
+          <div className="space-y-4">
+            {post.buttons?.map((btn, idx) => (
+              <div key={idx} className="bg-blue-50/50 rounded-3xl p-6 md:p-8 border border-blue-100/50">
+                <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="text-center md:text-left">
+                    <h3 className="text-lg font-bold text-blue-900 mb-1">{btn.label}</h3>
+                    <p className="text-blue-700/60 font-medium text-xs">Verified secure download link</p>
+                  </div>
+                  
+                  <a
+                    href={btn.link}
+                    onClick={handleDownloadClick}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-3 bg-blue-600 text-white px-8 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all w-full md:w-auto uppercase tracking-widest"
+                  >
+                    <Download size={20} />
+                    {btn.label}
+                  </a>
+                </div>
               </div>
-              
-              <a
-                href={post.downloadLink}
-                onClick={handleDownloadClick}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-3 bg-blue-600 text-white px-10 py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-200 hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all w-full md:w-auto"
-              >
-                <Download size={24} />
-                START DOWNLOAD
-              </a>
-            </div>
+            ))}
           </div>
 
           <div className="mt-12">

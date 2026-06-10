@@ -194,11 +194,17 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
   const { user } = useAuth();
-  const [formData, setFormData] = useState({ title: '', imageUrl: '', description: '', downloadLink: '', category: '' });
+  const [formData, setFormData] = useState({ title: '', imageUrl: '', description: '', category: '', buttons: [{ label: 'DOWNLOAD', link: '' }] });
 
   const handleEdit = (post: Post) => {
     setEditingPost(post);
-    setFormData({ title: post.title, imageUrl: post.imageUrl, description: post.description, downloadLink: post.downloadLink, category: post.category });
+    setFormData({ 
+      title: post.title, 
+      imageUrl: post.imageUrl, 
+      description: post.description, 
+      category: post.category, 
+      buttons: post.buttons || [{ label: 'DOWNLOAD', link: '' }] 
+    });
     setShowModal(true);
   };
 
@@ -215,7 +221,7 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
     } catch (err) { alert(err); }
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) return alert('File too large (Max 2MB)');
@@ -233,23 +239,32 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
 
   return (
     <div>
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
-        <h3 className="text-3xl font-black text-gray-900 tracking-tighter uppercase">RESOURCES</h3>
-        <button onClick={() => { setEditingPost(null); setFormData({ title: '', imageUrl: '', description: '', downloadLink: '', category: '' }); setShowModal(true); }} className="bg-blue-600 text-white px-10 py-5 rounded-2xl font-black flex items-center gap-3 hover:bg-blue-700 transition shadow-xl shadow-blue-100 uppercase tracking-widest text-xs">
-          <Plus size={20} /> CREATE NEW POST
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+        <div>
+          <h3 className="text-2xl font-black text-gray-900 tracking-tighter uppercase">Content Library</h3>
+          <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1 uppercase">Manage your premium resources</p>
+        </div>
+        <button onClick={() => { setEditingPost(null); setFormData({ title: '', imageUrl: '', description: '', category: '', buttons: [{ label: 'DOWNLOAD', link: '' }] }); setShowModal(true); }} className="bg-blue-600 text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3 hover:bg-blue-700 transition shadow-xl shadow-blue-100 uppercase tracking-widest text-[10px]">
+          <Plus size={18} /> New Resource
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {posts.map(post => (
-          <div key={post.id} className="bg-gray-50 border border-gray-100 p-6 rounded-[32px] group relative">
-             <img src={post.imageUrl} className="w-full h-40 rounded-2xl object-cover mb-4 grayscale group-hover:grayscale-0 transition duration-500" />
-             <h4 className="font-bold text-gray-900 mb-4 line-clamp-1">{post.title}</h4>
-             <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-3 py-1.5 rounded-full uppercase">{post.category}</span>
-                <div className="flex gap-1">
-                   <button onClick={() => handleEdit(post)} className="p-2.5 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-blue-600 shadow-sm transition"><Edit2 size={16} /></button>
-                   <button onClick={() => handleDelete(post.id)} className="p-2.5 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-red-600 shadow-sm transition"><Trash2 size={16} /></button>
+          <div key={post.id} className="bg-white border border-gray-100 p-5 rounded-[32px] group relative shadow-sm hover:shadow-xl transition-all duration-500">
+             <div className="relative aspect-video rounded-2xl overflow-hidden mb-4">
+               <img src={post.imageUrl} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500" />
+               <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[8px] font-black uppercase text-blue-600 shadow-sm">{post.category}</div>
+             </div>
+             <h4 className="font-black text-gray-900 mb-6 line-clamp-1 text-sm uppercase tracking-tight">{post.title}</h4>
+             <div className="flex items-center justify-between border-t border-gray-50 pt-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center"><Download size={10} className="text-blue-600" /></div>
+                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{post.views || 0}</span>
+                </div>
+                <div className="flex gap-2">
+                   <button onClick={() => handleEdit(post)} className="p-2 bg-gray-50 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition"><Edit2 size={14} /></button>
+                   <button onClick={() => handleDelete(post.id)} className="p-2 bg-gray-50 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition"><Trash2 size={14} /></button>
                 </div>
              </div>
           </div>
@@ -258,55 +273,107 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
 
       <AnimatePresence>
         {showModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white w-full max-w-2xl rounded-[40px] p-10 max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-lg">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white w-full max-w-xl rounded-[40px] p-8 md:p-10 max-h-[90vh] overflow-y-auto shadow-2xl">
               <div className="flex justify-between items-center mb-8">
-                <h4 className="text-2xl font-black uppercase tracking-tight">{editingPost ? 'Edit Post' : 'New Content'}</h4>
-                <button onClick={() => setShowModal(false)} className="text-gray-300 hover:text-gray-900 transition"><X size={28} /></button>
+                <div>
+                  <h4 className="text-xl font-black uppercase tracking-tight">{editingPost ? 'Edit Resource' : 'Publish Resource'}</h4>
+                  <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest">Global Synchronization</p>
+                </div>
+                <button onClick={() => setShowModal(false)} className="bg-gray-50 p-2 rounded-full text-gray-400 hover:text-gray-900 transition"><X size={24} /></button>
               </div>
               <form onSubmit={handleSave} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Core Title</label>
-                  <input type="text" className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold transition" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
+                  <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Title</label>
+                  <input type="text" className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm" required value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} placeholder="Resource Title" />
                 </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Asset Presentation</label>
-                    <div className="relative group aspect-video rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 mb-2">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Media</label>
+                    <div className="group relative aspect-video rounded-2xl overflow-hidden bg-gray-50 border border-gray-100 mb-2">
                        {formData.imageUrl ? (
                          <img src={formData.imageUrl} className="w-full h-full object-cover" />
                        ) : (
                          <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
-                           <ImageIcon size={32} />
-                           <span className="text-[10px] font-bold mt-2">No Image</span>
+                           <ImageIcon size={24} />
+                           <span className="text-[8px] font-bold mt-2 uppercase tracking-widest">No Media</span>
                          </div>
                        )}
-                       <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity">
-                         <Camera className="text-white" />
-                         <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+                       <label className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
+                         <Camera size={20} />
+                         <span className="text-[8px] font-black uppercase tracking-widest">Choose Device</span>
+                         <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('post', e)} />
                        </label>
                     </div>
-                    <input type="url" placeholder="Direct URL (Optional)" className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-bold text-xs" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
+                    <input type="url" placeholder="Paste external link..." className="w-full bg-gray-50 border border-gray-100 p-3 rounded-lg outline-none focus:bg-white focus:border-blue-500 font-bold text-[10px]" value={formData.imageUrl} onChange={e => setFormData({...formData, imageUrl: e.target.value})} />
                   </div>
                   <div className="space-y-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Category</label>
-                      <select className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
-                        <option value="">Choose One</option>
+                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Taxonomy</label>
+                      <select className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm" required value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}>
+                        <option value="">Category</option>
                         {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                       </select>
                     </div>
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Secure Download Path</label>
-                      <input type="url" className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-bold text-sm" required value={formData.downloadLink} onChange={e => setFormData({...formData, downloadLink: e.target.value})} />
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between">
+                         <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Download Nodes</label>
+                         <button 
+                          type="button" 
+                          onClick={() => setFormData({...formData, buttons: [...formData.buttons, { label: 'MIRROR', link: '' }]})}
+                          className="text-[9px] font-black text-blue-600 uppercase hover:underline"
+                        >
+                          + Add Button
+                        </button>
+                      </div>
+                      <div className="space-y-3 max-h-48 overflow-y-auto pr-2 custom-scrollbar">
+                        {formData.buttons.map((btn, idx) => (
+                          <div key={idx} className="flex gap-2 items-start bg-white border border-gray-100 p-3 rounded-xl shadow-sm">
+                            <div className="flex-1 space-y-2">
+                              <input 
+                                type="text" 
+                                placeholder="Button Label (e.g. DOWNLOAD)" 
+                                className="w-full bg-gray-50 border-none p-2 rounded-lg font-black text-[9px] uppercase outline-none focus:bg-white" 
+                                value={btn.label} 
+                                onChange={e => {
+                                  const newBtns = [...formData.buttons];
+                                  newBtns[idx].label = e.target.value;
+                                  setFormData({...formData, buttons: newBtns});
+                                }}
+                              />
+                              <input 
+                                type="url" 
+                                placeholder="https://..." 
+                                className="w-full bg-gray-100 border-none p-2 rounded-lg font-bold text-[9px] outline-none focus:bg-white" 
+                                value={btn.link} 
+                                onChange={e => {
+                                  const newBtns = [...formData.buttons];
+                                  newBtns[idx].link = e.target.value;
+                                  setFormData({...formData, buttons: newBtns});
+                                }}
+                              />
+                            </div>
+                            {formData.buttons.length > 1 && (
+                              <button 
+                                type="button" 
+                                onClick={() => setFormData({...formData, buttons: formData.buttons.filter((_, i) => i !== idx)})}
+                                className="p-2 text-red-300 hover:text-red-500 transition"
+                              >
+                                <Trash2 size={12} />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Content Details</label>
-                  <textarea rows={5} className="w-full bg-gray-50 border border-gray-100 p-5 rounded-2xl outline-none focus:bg-white focus:border-blue-500 font-medium" required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} />
+                  <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Documentation</label>
+                  <textarea rows={3} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-medium text-sm" required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Features, installation steps, etc..." />
                 </div>
-                <button type="submit" className="w-full bg-blue-600 text-white font-black py-6 rounded-2xl shadow-xl shadow-blue-100 uppercase tracking-[0.2em] text-xs hover:bg-blue-700 active:scale-95 transition-all">Synchronize Content</button>
+                <button type="submit" className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-100 uppercase tracking-[0.2em] text-[10px] hover:bg-blue-700 active:scale-95 transition-all">Publish to Global Index</button>
               </form>
             </motion.div>
           </div>
@@ -348,6 +415,26 @@ const CategoriesPanel: React.FC<{ categories: Category[] }> = ({ categories }) =
 const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave: any, publishing: boolean }> = ({ settings, setSettings, onSave, publishing }) => {
   const [newSlide, setNewSlide] = useState({ url: '', link: '' });
 
+  const handleFileUpload = (type: 'slider' | 'popup', e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) return alert('File too large (Max 2MB)');
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        if (type === 'slider') {
+          setNewSlide({ ...newSlide, url: result });
+        } else if (type === 'popup') {
+          setSettings({
+            ...settings,
+            popup: { ...settings.popup!, imageUrl: result }
+          });
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <form onSubmit={onSave} className="max-w-4xl">
       <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">UI ARCHITECTURE</h3>
@@ -376,7 +463,7 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-4">
+            <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Title</label>
                 <input 
@@ -397,23 +484,38 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
                   placeholder="https://t.me/yourchannel"
                 />
               </div>
+              <button 
+                type="button"
+                onClick={() => setSettings({...settings, popup: { isEnabled: false, title: '', imageUrl: '', telegramLink: '' }})}
+                className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline"
+              >
+                Reset Popup Content
+              </button>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Visual Image Link</label>
-              <div className="space-y-3">
-                <input 
-                  type="url" 
-                  className="w-full bg-white border border-blue-100/50 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm"
-                  value={settings.popup?.imageUrl}
-                  onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
-                  placeholder="https://example.com/popup-image.jpg"
-                />
-                <div className="relative group aspect-video rounded-3xl overflow-hidden bg-white border border-blue-100/50 shadow-sm">
+              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Visual Image</label>
+              <div className="space-y-4">
+                <div className="group relative aspect-video rounded-[32px] overflow-hidden bg-white border border-blue-100/50 shadow-sm">
                   <img 
                     src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
                     className="w-full h-full object-cover"
                     alt="Popup Preview"
+                  />
+                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
+                    <Camera size={32} />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Change Image</span>
+                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
+                  </label>
+                </div>
+                <div className="relative group">
+                   <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />
+                   <input 
+                    type="url" 
+                    className="w-full bg-white border border-blue-100/50 p-4 pl-12 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px]"
+                    value={settings.popup?.imageUrl}
+                    onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
+                    placeholder="Or paste direct image URL here..."
                   />
                 </div>
               </div>
@@ -431,52 +533,66 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
           <div className="bg-gray-50/50 p-8 rounded-[40px] border border-gray-100">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 border-b border-gray-100 pb-8">
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Slide Image Link</label>
-                <div className="relative group">
-                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
-                  <input 
-                    type="url" 
-                    placeholder="https://example.com/slide1.jpg" 
-                    className="w-full bg-white border border-gray-100 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" 
-                    value={newSlide.url} 
-                    onChange={e => setNewSlide({...newSlide, url: e.target.value})} 
-                  />
-                </div>
-                {newSlide.url && (
-                  <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
-                    <img src={newSlide.url} className="w-full h-full object-cover" alt="Preview" onError={(e) => (e.currentTarget.style.display = 'none')} />
+                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Slide Image</label>
+                <div className="space-y-4">
+                  <div className="group relative aspect-video rounded-3xl overflow-hidden bg-white border border-gray-100 shadow-sm">
+                    {newSlide.url ? (
+                      <img src={newSlide.url} className="w-full h-full object-cover" alt="Preview" />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                        <ImageIcon size={32} />
+                        <span className="text-[10px] font-bold mt-2">No Slide Selected</span>
+                      </div>
+                    )}
+                    <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
+                      <Camera size={24} />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload from Gallery</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('slider', e)} />
+                    </label>
                   </div>
-                )}
+                  <div className="relative group">
+                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />
+                    <input 
+                      type="url" 
+                      placeholder="Or paste direct image URL here..." 
+                      className="w-full bg-white border border-gray-100 p-4 pl-12 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px] transition" 
+                      value={newSlide.url} 
+                      onChange={e => setNewSlide({...newSlide, url: e.target.value})} 
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-4">
-                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Target Destination (Optional)</label>
-                <div className="relative group">
-                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
-                  <input 
-                    type="url" 
-                    placeholder="https://t.me/your_channel" 
-                    className="w-full bg-white border border-gray-100 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" 
-                    value={newSlide.link} 
-                    onChange={e => setNewSlide({...newSlide, link: e.target.value})} 
-                  />
+                <label className="text-[10px] font-black uppercase text-gray-900/60 tracking-wider">Click Destination (Optional)</label>
+                <div className="space-y-4">
+                  <div className="relative group">
+                    <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
+                    <input 
+                      type="url" 
+                      placeholder="https://t.me/your_channel" 
+                      className="w-full bg-white border border-gray-100 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm transition" 
+                      value={newSlide.link} 
+                      onChange={e => setNewSlide({...newSlide, link: e.target.value})} 
+                    />
+                  </div>
+                  <button 
+                    type="button" 
+                    disabled={!newSlide.url}
+                    onClick={() => { 
+                      if(newSlide.url){ 
+                        setSettings({
+                          ...settings, 
+                          sliderImages: [...(settings.sliderImages || []), newSlide]
+                        }); 
+                        setNewSlide({ url: '', link: '' }); 
+                      } 
+                    }} 
+                    className={`w-full py-5 rounded-2xl font-black tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl ${newSlide.url ? 'bg-blue-600 text-white shadow-blue-100 hover:bg-blue-700 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'}`}
+                  >
+                    ADD TO STACK
+                  </button>
                 </div>
-                <button 
-                  type="button" 
-                  disabled={!newSlide.url}
-                  onClick={() => { 
-                    if(newSlide.url){ 
-                      setSettings({
-                        ...settings, 
-                        sliderImages: [...(settings.sliderImages || []), newSlide]
-                      }); 
-                      setNewSlide({ url: '', link: '' }); 
-                    } 
-                  }} 
-                  className={`w-full py-5 rounded-2xl font-black tracking-[0.2em] text-[10px] uppercase transition-all shadow-xl ${newSlide.url ? 'bg-blue-600 text-white shadow-blue-100 hover:bg-blue-700 active:scale-95' : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'}`}
-                >
-                  ADD TO STACK
-                </button>
               </div>
             </div>
 

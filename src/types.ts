@@ -1,9 +1,14 @@
+export interface DownloadButton {
+  label: string;
+  link: string;
+}
+
 export interface Post {
   id: string;
   title: string;
   imageUrl: string;
   description: string;
-  downloadLink: string;
+  buttons: DownloadButton[];
   category: string;
   createdAt: any; // Firebase Timestamp
   updatedAt?: any;
