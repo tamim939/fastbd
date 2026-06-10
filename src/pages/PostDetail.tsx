@@ -137,10 +137,6 @@ const PostDetail: React.FC = () => {
             ))}
           </div>
 
-          <div className="mt-8">
-             <BannerAd />
-          </div>
-
           <div className="flex justify-center mt-12 pt-12 border-t border-gray-50">
             <button className="flex items-center gap-2 text-gray-400 hover:text-blue-600 font-bold uppercase tracking-widest text-xs transition">
               <Share2 size={16} />

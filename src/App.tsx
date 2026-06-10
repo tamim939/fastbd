@@ -48,10 +48,6 @@ const AppContent: React.FC = () => {
       
       <Navbar />
       
-      <div className="flex justify-center pt-4">
-        <BannerAd />
-      </div>
-
       <main className="min-h-[calc(100vh-16rem)]">
         <Routes>
           <Route path="/" element={<Home />} />
