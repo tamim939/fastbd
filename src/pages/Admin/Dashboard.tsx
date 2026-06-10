@@ -193,6 +193,7 @@ const StatsPanel: React.FC<{ posts: Post[], users: UserProfile[], globalVisitors
 const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts, categories }) => {
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
+  const [publishing, setPublishing] = useState(false);
   const { user } = useAuth();
   const [formData, setFormData] = useState({ title: '', imageUrl: '', description: '', category: '', buttons: [{ label: 'DOWNLOAD', link: '' }] });
 
@@ -211,6 +212,7 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    setPublishing(true);
     try {
       if (editingPost) {
         await updateDoc(doc(db, 'posts', editingPost.id), { ...formData, updatedAt: serverTimestamp() });
@@ -218,7 +220,14 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
         await addDoc(collection(db, 'posts'), { ...formData, createdAt: serverTimestamp(), authorId: user.uid, views: 0 });
       }
       setShowModal(false);
-    } catch (err) { alert(err); }
+      // We don't have direct access to setSuccess here unless we pass it, but the UI is reactive anyway.
+      // However, alert for error is fine, and successful close is a good indicator.
+    } catch (err: any) { 
+      console.error(err);
+      alert('PUBLISH FAILED: ' + (err.message || 'Check connection or permissions')); 
+    } finally {
+      setPublishing(false);
+    }
   };
 
   const handleFileUpload = (type: string, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -373,7 +382,14 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
                   <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Documentation</label>
                   <textarea rows={3} className="w-full bg-gray-50 border border-gray-100 p-4 rounded-xl outline-none focus:bg-white focus:border-blue-500 font-medium text-sm" required value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} placeholder="Features, installation steps, etc..." />
                 </div>
-                <button type="submit" className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-100 uppercase tracking-[0.2em] text-[10px] hover:bg-blue-700 active:scale-95 transition-all">Publish to Global Index</button>
+                <button 
+                  type="submit" 
+                  disabled={publishing}
+                  className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-blue-100 uppercase tracking-[0.2em] text-[10px] hover:bg-blue-700 active:scale-95 transition-all flex items-center justify-center gap-2"
+                >
+                  {publishing ? <Loader2 className="animate-spin" size={16} /> : null}
+                  {publishing ? 'Synchronizing Content...' : 'Publish to Global Index'}
+                </button>
               </form>
             </motion.div>
           </div>

@@ -37,12 +37,12 @@ service cloud.firestore {
     // --- Entity Validations ---
 
     function isValidPost(data) {
-      return data.keys().hasAll(['title', 'imageUrl', 'description', 'downloadLink', 'category', 'createdAt', 'authorId']) &&
-             data.keys().size() <= 9 && // Including optional 'views', 'updatedAt'
+      return data.keys().hasAll(['title', 'imageUrl', 'description', 'buttons', 'category', 'createdAt', 'authorId']) &&
+             data.keys().size() <= 10 && // Including optional 'views', 'updatedAt'
              data.title is string && data.title.size() <= 255 &&
              data.imageUrl is string && data.imageUrl.size() <= 1024 &&
              data.description is string && data.description.size() <= 10000 &&
-             data.downloadLink is string && data.downloadLink.size() <= 1024 &&
+             data.buttons is list &&
              data.category is string && data.category.size() <= 100 &&
              data.authorId == request.auth.uid &&
              data.createdAt == request.time;
@@ -50,7 +50,7 @@ service cloud.firestore {
 
     function isValidUser(data) {
       return data.keys().hasAll(['email', 'role', 'joinedAt']) &&
-             data.keys().size() <= 5 &&
+             data.keys().size() <= 7 && // Added extra for safety with potential photoURL/displayName
              data.email == request.auth.token.email &&
              data.role in ['user', 'admin'] &&
              data.joinedAt is timestamp;
@@ -62,7 +62,7 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isAdmin() && isValidPost(incoming());
       allow update: if isAdmin() && isValidPost(incoming()) && (
-        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'imageUrl', 'description', 'downloadLink', 'category', 'updatedAt', 'views'])
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'imageUrl', 'description', 'buttons', 'category', 'updatedAt', 'views'])
       );
       allow delete: if isAdmin();
     }
