@@ -71,13 +71,13 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           {new Date(post.createdAt?.toDate?.() || post.createdAt).toLocaleDateString('en-GB')}
         </div>
 
-        <Link to={`/post/${post.id}`} className="mb-8 block flex-1">
+        <Link to={`/post/${post.id}`} className="mb-4 block flex-1">
           <h3 className="text-xl font-black text-gray-900 group-hover:text-blue-600 transition leading-[1.3] uppercase tracking-tight">
             {post.title}
           </h3>
         </Link>
 
-        <div className="flex items-center justify-between mt-auto pt-6 border-t border-gray-50">
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
               <Download size={14} className="text-blue-600" />
