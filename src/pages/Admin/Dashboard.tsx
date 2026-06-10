@@ -220,8 +220,7 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
         await addDoc(collection(db, 'posts'), { ...formData, createdAt: serverTimestamp(), authorId: user.uid, views: 0 });
       }
       setShowModal(false);
-      // We don't have direct access to setSuccess here unless we pass it, but the UI is reactive anyway.
-      // However, alert for error is fine, and successful close is a good indicator.
+      alert('SUCCESS: Post synchronized to Global Index!');
     } catch (err: any) { 
       console.error(err);
       alert('PUBLISH FAILED: ' + (err.message || 'Check connection or permissions')); 
