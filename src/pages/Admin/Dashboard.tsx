@@ -298,41 +298,32 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Thumbnail Source</label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="group relative aspect-video rounded-2xl overflow-hidden bg-gray-900 border border-white/5 shadow-2xl">
+                    <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Hero Image Link</label>
+                    <div className="space-y-4">
+                      <div className="group relative aspect-video rounded-3xl overflow-hidden bg-gray-900 border border-white/5 shadow-2xl">
                          {formData.imageUrl ? (
                            <img src={formData.imageUrl} className="w-full h-full object-cover" alt="Preview" />
                          ) : (
                            <div className="w-full h-full flex flex-col items-center justify-center text-gray-700 bg-[#0f0f0f]">
                              <ImageIcon size={32} />
-                             <span className="text-[8px] font-black mt-2 uppercase tracking-[0.3em]">No Preview</span>
+                             <span className="text-[8px] font-black mt-2 uppercase tracking-[0.3em]">Link Required</span>
                            </div>
                          )}
-                         <label className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
-                           <Camera size={24} />
-                           <span className="text-[8px] font-black uppercase tracking-widest">Upload File</span>
-                           <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('post', e)} />
-                         </label>
                       </div>
-                      <div className="flex flex-col justify-center gap-4">
-                        <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                           <p className="text-[9px] font-black text-blue-600 uppercase tracking-widest mb-2">Pro Option: Remote URL</p>
-                           <div className="relative">
-                             <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-300" size={14} />
-                             <input 
-                               type="url" 
-                               placeholder="Paste Image URL..." 
-                               className="w-full bg-white border border-blue-100 p-3 pl-10 rounded-xl outline-none focus:ring-4 focus:ring-blue-500/10 font-bold text-[10px]" 
-                               value={formData.imageUrl} 
-                               onChange={e => setFormData({...formData, imageUrl: e.target.value})} 
-                             />
-                           </div>
-                        </div>
-                        <p className="text-[8px] font-bold text-gray-400 italic px-2 leading-relaxed">
-                          * Prefer high-quality JPG or PNG links for better indexing across the global network.
-                        </p>
+                      <div className="relative group">
+                        <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-blue-400" size={16} />
+                        <input 
+                          type="url" 
+                          placeholder="PASTE IMAGE URL HERE..." 
+                          className="w-full bg-white border border-blue-100 p-5 pl-12 rounded-2xl outline-none focus:ring-4 focus:ring-blue-500/10 font-bold text-xs uppercase" 
+                          required
+                          value={formData.imageUrl} 
+                          onChange={e => setFormData({...formData, imageUrl: e.target.value})} 
+                        />
                       </div>
+                      <p className="text-[8px] font-bold text-blue-400 italic px-2">
+                        * Image will be synchronized from this remote URL across the global content network.
+                      </p>
                     </div>
                   </div>
                   <div className="space-y-6">
@@ -531,11 +522,6 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
                       className="w-full h-full object-cover"
                       alt="Popup Preview"
                     />
-                    <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
-                      <Camera size={32} />
-                      <span className="text-[10px] font-black uppercase tracking-widest">Change Banner</span>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
-                    </label>
                   </div>
                   <div className="relative group">
                     <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />
@@ -605,16 +591,11 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
                     {newSlide.url ? (
                       <img src={newSlide.url} className="w-full h-full object-cover" alt="Preview" />
                     ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-300">
+                      <div className="w-full h-full flex flex-col items-center justify-center text-gray-300 bg-gray-50">
                         <ImageIcon size={32} />
-                        <span className="text-[10px] font-bold mt-2">No Slide Selected</span>
+                        <span className="text-[10px] font-bold mt-2 uppercase tracking-widest text-[8px]">Paste Link Below</span>
                       </div>
                     )}
-                    <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
-                      <Camera size={24} />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-center px-4">Upload from Gallery</span>
-                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('slider', e)} />
-                    </label>
                   </div>
                   <div className="relative group">
                     <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />

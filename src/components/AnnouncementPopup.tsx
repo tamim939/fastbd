@@ -16,17 +16,13 @@ export const AnnouncementPopup: React.FC<PopupProps> = ({ config }) => {
 
   useEffect(() => {
     if (config?.isEnabled) {
-      const shown = sessionStorage.getItem('popup_shown');
-      if (!shown) {
-        const timer = setTimeout(() => setShow(true), 1500);
-        return () => clearTimeout(timer);
-      }
+      const timer = setTimeout(() => setShow(true), 1500);
+      return () => clearTimeout(timer);
     }
   }, [config]);
 
   const handleClose = () => {
     setShow(false);
-    sessionStorage.setItem('popup_shown', 'true');
   };
 
   if (!config || !show) return null;
