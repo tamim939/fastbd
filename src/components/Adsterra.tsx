@@ -24,28 +24,29 @@ export const SocialBarAd: React.FC = () => {
 };
 
 export const BannerAd: React.FC = () => {
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    const container = document.getElementById('adsterra-banner');
-    if (container && container.childNodes.length === 0) {
+    if (containerRef.current && containerRef.current.childNodes.length === 0) {
       const atOptionsScript = document.createElement('script');
       atOptionsScript.type = 'text/javascript';
       atOptionsScript.innerHTML = `
         atOptions = {
-          'key' : 'b4af71e52314f97d8cae6b05b7315210',
+          'key' : 'e6e83dcaa3766555aa7773fd6115fe51',
           'format' : 'iframe',
-          'height' : 60,
-          'width' : 468,
+          'height' : 90,
+          'width' : 728,
           'params' : {}
         };
       `;
-      container.appendChild(atOptionsScript);
+      containerRef.current.appendChild(atOptionsScript);
 
       const invokeScript = document.createElement('script');
       invokeScript.type = 'text/javascript';
-      invokeScript.src = 'https://www.highperformanceformat.com/b4af71e52314f97d8cae6b05b7315210/invoke.js';
-      container.appendChild(invokeScript);
+      invokeScript.src = 'https://www.highperformanceformat.com/e6e83dcaa3766555aa7773fd6115fe51/invoke.js';
+      containerRef.current.appendChild(invokeScript);
     }
   }, []);
 
-  return <div id="adsterra-banner" className="flex justify-center my-4 overflow-hidden"></div>;
+  return <div ref={containerRef} className="flex justify-center my-4 overflow-hidden min-h-[90px]"></div>;
 };
