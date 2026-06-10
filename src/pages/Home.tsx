@@ -80,13 +80,8 @@ const Home: React.FC = () => {
         <NoticeBoard notice={settings?.notice || ''} />
       </motion.div>
 
-      {/* Ad Space */}
-      <div className="my-6 md:my-10">
-        <BannerAd />
-      </div>
-
       {/* Main Content Area */}
-      <div className="mt-8 bg-gray-50/50 rounded-[24px] md:rounded-[40px] p-5 md:p-10 border border-gray-100">
+      <div className="bg-gray-50/50 rounded-[24px] md:rounded-[40px] p-5 md:p-10 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-6">
           <div className="relative group w-full md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition" size={20} />
@@ -120,11 +115,6 @@ const Home: React.FC = () => {
             <p className="text-gray-400 font-medium">No resources found matching your criteria.</p>
           </div>
         )}
-      </div>
-
-      {/* Bottom Ad */}
-      <div className="mt-12">
-        <BannerAd />
       </div>
     </div>
   );

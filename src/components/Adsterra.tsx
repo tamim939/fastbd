@@ -32,10 +32,10 @@ export const BannerAd: React.FC = () => {
       atOptionsScript.type = 'text/javascript';
       atOptionsScript.innerHTML = `
         atOptions = {
-          'key' : 'e6e83dcaa3766555aa7773fd6115fe51',
+          'key' : 'b4af71e52314f97d8cae6b05b7315210',
           'format' : 'iframe',
-          'height' : 90,
-          'width' : 728,
+          'height' : 60,
+          'width' : 468,
           'params' : {}
         };
       `;
@@ -43,10 +43,10 @@ export const BannerAd: React.FC = () => {
 
       const invokeScript = document.createElement('script');
       invokeScript.type = 'text/javascript';
-      invokeScript.src = 'https://www.highperformanceformat.com/e6e83dcaa3766555aa7773fd6115fe51/invoke.js';
+      invokeScript.src = 'https://www.highperformanceformat.com/b4af71e52314f97d8cae6b05b7315210/invoke.js';
       containerRef.current.appendChild(invokeScript);
     }
   }, []);
 
-  return <div ref={containerRef} className="flex justify-center my-4 overflow-hidden min-h-[90px]"></div>;
+  return <div ref={containerRef} className="flex justify-center my-4 overflow-hidden min-h-[60px]"></div>;
 };

@@ -48,6 +48,10 @@ const AppContent: React.FC = () => {
       
       <Navbar />
       
+      <div className="flex justify-center pt-4">
+        <BannerAd />
+      </div>
+
       <main className="min-h-[calc(100vh-16rem)]">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -60,11 +64,11 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      <div className="flex justify-center py-6 bg-gray-50/30 border-y border-gray-100">
+      <Footer />
+
+      <div className="flex justify-center py-10 bg-white">
         <BannerAd />
       </div>
-
-      <Footer />
 
       {/* Persistence Ads */}
       <PopunderAd />
