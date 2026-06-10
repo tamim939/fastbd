@@ -451,73 +451,79 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
           <div className="flex items-center justify-between">
             <div>
               <h4 className="text-xl font-black text-blue-900 uppercase tracking-tighter">Announcement Popup</h4>
-              <p className="text-blue-700/60 font-bold text-xs">Shown to users upon entry (1 per session)</p>
+              <p className="text-blue-700/60 font-bold text-xs">Global Modal (Appears 1 per session)</p>
             </div>
-            <button 
-              type="button"
-              onClick={() => setSettings({...settings, popup: { ...settings.popup!, isEnabled: !settings.popup?.isEnabled }})}
-              className={`px-6 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${settings.popup?.isEnabled ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-200 text-gray-500'}`}
-            >
-              {settings.popup?.isEnabled ? 'ENABLED' : 'DISABLED'}
-            </button>
+            <div className="flex gap-4">
+              <button 
+                type="button"
+                onClick={() => setSettings({...settings, popup: { ...settings.popup!, isEnabled: !settings.popup?.isEnabled }})}
+                className={`px-6 py-2.5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${settings.popup?.isEnabled ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-gray-200 text-gray-500'}`}
+              >
+                {settings.popup?.isEnabled ? 'PUBLISHED' : 'HIDDEN'}
+              </button>
+              <button 
+                type="button"
+                onClick={() => {
+                  if(confirm('Delete entire popup content?')) {
+                    setSettings({...settings, popup: { isEnabled: false, title: '', imageUrl: '', telegramLink: '' }});
+                  }
+                }}
+                className="bg-red-50 text-red-500 p-2.5 rounded-xl hover:bg-red-500 hover:text-white transition-all shadow-sm"
+                title="Delete Popup Content"
+              >
+                <Trash2 size={20} />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
             <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Title</label>
+                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Headline</label>
                 <input 
                   type="text" 
                   className="w-full bg-white border border-blue-100/50 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold"
                   value={settings.popup?.title}
                   onChange={e => setSettings({...settings, popup: { ...settings.popup!, title: e.target.value }})}
-                  placeholder="Welcome to FAST BD!"
+                  placeholder="e.g. JOIN OUR PREMIUM CHANNEL"
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Telegram Invite Link</label>
-                <input 
-                  type="url" 
-                  className="w-full bg-white border border-blue-100/50 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm"
-                  value={settings.popup?.telegramLink}
-                  onChange={e => setSettings({...settings, popup: { ...settings.popup!, telegramLink: e.target.value }})}
-                  placeholder="https://t.me/yourchannel"
-                />
+                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Telegram Button Link</label>
+                <div className="relative group">
+                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600" size={18} />
+                  <input 
+                    type="url" 
+                    className="w-full bg-white border border-blue-100/50 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm"
+                    value={settings.popup?.telegramLink}
+                    onChange={e => setSettings({...settings, popup: { ...settings.popup!, telegramLink: e.target.value }})}
+                    placeholder="https://t.me/your_channel"
+                  />
+                </div>
               </div>
-              <button 
-                type="button"
-                onClick={() => setSettings({...settings, popup: { isEnabled: false, title: '', imageUrl: '', telegramLink: '' }})}
-                className="text-[10px] font-black text-red-500 uppercase tracking-widest hover:underline"
-              >
-                Reset Popup Content
-              </button>
             </div>
 
             <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Visual Image</label>
+              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Branding Logo/Image</label>
               <div className="space-y-4">
-                <div className="group relative aspect-video rounded-[32px] overflow-hidden bg-white border border-blue-100/50 shadow-sm">
+                <div className="group relative w-32 h-32 rounded-[32px] overflow-hidden bg-white border border-blue-100/50 shadow-sm mx-auto lg:mx-0">
                   <img 
                     src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
-                    className="w-full h-full object-cover"
-                    alt="Popup Preview"
+                    className="w-full h-full object-contain p-2"
+                    alt="Logo Preview"
                   />
-                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
-                    <Camera size={32} />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Change Image</span>
+                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-white">
+                    <Camera size={24} />
                     <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
                   </label>
                 </div>
-                <div className="relative group">
-                   <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />
-                   <input 
-                    type="url" 
-                    className="w-full bg-white border border-blue-100/50 p-4 pl-12 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px]"
-                    value={settings.popup?.imageUrl}
-                    onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
-                    placeholder="Or paste direct image URL here..."
-                  />
-                </div>
+                <input 
+                  type="url" 
+                  className="w-full bg-white border border-blue-100/50 p-4 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px]"
+                  value={settings.popup?.imageUrl}
+                  onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
+                  placeholder="Direct Image URL (e.g. /logo.png)"
+                />
               </div>
             </div>
           </div>
