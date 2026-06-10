@@ -477,9 +477,9 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Headline</label>
+                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em] ml-1">Popup Headline</label>
                 <input 
                   type="text" 
                   className="w-full bg-white border border-blue-100/50 p-5 rounded-2xl outline-none focus:border-blue-500 font-bold"
@@ -488,42 +488,67 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
                   placeholder="e.g. JOIN OUR PREMIUM CHANNEL"
                 />
               </div>
+              <div className="space-y-4">
+                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em] ml-1">Popup Banner Source</label>
+                <div className="space-y-4">
+                  <div className="group relative aspect-video rounded-[32px] overflow-hidden bg-white border border-blue-100/50 shadow-sm">
+                    <img 
+                      src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
+                      className="w-full h-full object-cover"
+                      alt="Popup Preview"
+                    />
+                    <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-opacity text-white gap-2">
+                      <Camera size={32} />
+                      <span className="text-[10px] font-black uppercase tracking-widest">Change Banner</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
+                    </label>
+                  </div>
+                  <div className="relative group">
+                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={16} />
+                    <input 
+                      type="url" 
+                      className="w-full bg-white border border-blue-100/50 p-4 pl-12 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px]"
+                      value={settings.popup?.imageUrl}
+                      onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
+                      placeholder="Or paste direct image URL here..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Telegram Button Link</label>
+                <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em] ml-1">Action Link (Telegram)</label>
                 <div className="relative group">
-                  <LinkIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600" size={18} />
+                  <LinkIcon className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-blue-600 transition" size={18} />
                   <input 
                     type="url" 
-                    className="w-full bg-white border border-blue-100/50 p-5 pl-12 rounded-2xl outline-none focus:border-blue-500 font-bold text-sm"
+                    className="w-full bg-white border border-blue-100/50 p-6 pl-14 rounded-3xl outline-none focus:border-blue-500 font-bold text-sm"
                     value={settings.popup?.telegramLink}
                     onChange={e => setSettings({...settings, popup: { ...settings.popup!, telegramLink: e.target.value }})}
                     placeholder="https://t.me/your_channel"
                   />
                 </div>
               </div>
-            </div>
-
-            <div className="space-y-4">
-              <label className="text-[10px] font-black uppercase text-blue-900/40 tracking-[0.2em]">Popup Branding Logo/Image</label>
-              <div className="space-y-4">
-                <div className="group relative w-32 h-32 rounded-[32px] overflow-hidden bg-white border border-blue-100/50 shadow-sm mx-auto lg:mx-0">
-                  <img 
-                    src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} 
-                    className="w-full h-full object-contain p-2"
-                    alt="Logo Preview"
-                  />
-                  <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-opacity text-white">
-                    <Camera size={24} />
-                    <input type="file" className="hidden" accept="image/*" onChange={(e) => handleFileUpload('popup', e)} />
-                  </label>
+              
+              <div className="bg-white p-6 rounded-[32px] border border-blue-100/30">
+                <h5 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4 block">Visual Architecture Preview</h5>
+                <div className="w-full aspect-video rounded-2xl relative overflow-hidden bg-gray-900 mb-4">
+                   <img src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} className="w-full h-full object-cover opacity-40" />
+                   <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
+                      <div className="bg-blue-600 text-white text-[6px] px-2 py-0.5 rounded-full mb-1">UPDATE</div>
+                      <div className="text-white text-[10px] font-black uppercase truncate w-full">{settings.popup?.title || 'Announcement Headline'}</div>
+                      <div className="bg-[#1877F2] text-white text-[8px] font-black py-2 px-4 rounded-lg mt-3 w-32 shadow-lg shadow-blue-500/20">JOIN NOW</div>
+                   </div>
                 </div>
-                <input 
-                  type="url" 
-                  className="w-full bg-white border border-blue-100/50 p-4 rounded-xl outline-none focus:border-blue-500 font-bold text-[10px]"
-                  value={settings.popup?.imageUrl}
-                  onChange={e => setSettings({...settings, popup: { ...settings.popup!, imageUrl: e.target.value }})}
-                  placeholder="Direct Image URL (e.g. /logo.png)"
-                />
+                <button 
+                  type="button" 
+                  onClick={onSave}
+                  className="w-full bg-blue-600/10 text-blue-600 font-black py-4 rounded-2xl hover:bg-blue-600 hover:text-white transition-all text-[10px] uppercase tracking-widest"
+                >
+                  Save Internal Cache
+                </button>
               </div>
             </div>
           </div>

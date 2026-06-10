@@ -28,33 +28,44 @@ export const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-2 md:gap-4">
             {user ? (
-              <div className="flex items-center gap-2 md:gap-3">
+              <div className="flex items-center gap-2 md:gap-4">
                 <Link 
                   to="/profile" 
-                  className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-blue-600/5 border border-blue-100 flex items-center justify-center font-black text-blue-600 text-[10px] hover:bg-blue-600 hover:text-white transition-all shadow-sm overflow-hidden uppercase"
+                  className="flex items-center gap-3 px-2 py-1.5 rounded-2xl hover:bg-gray-50 transition-all group"
                 >
-                  {profile?.photoURL ? (
-                    <img src={profile.photoURL} alt="P" className="w-full h-full object-cover" />
-                  ) : (
-                    profile?.displayName?.[0] || user.displayName?.[0] || 'U'
-                  )}
+                  <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl bg-blue-600/5 border border-blue-100 flex items-center justify-center font-black text-blue-600 text-[10px] shadow-sm overflow-hidden uppercase">
+                    {profile?.photoURL ? (
+                      <img src={profile.photoURL} alt="P" className="w-full h-full object-cover" />
+                    ) : (
+                      profile?.displayName?.[0] || user.displayName?.[0] || 'U'
+                    )}
+                  </div>
+                  <div className="hidden md:block text-left">
+                    <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest leading-none mb-1">Authenticated</p>
+                    <p className="text-sm font-black text-gray-900 tracking-tighter leading-none truncate max-w-[120px]">
+                      {profile?.displayName || user.displayName || 'Account'}
+                    </p>
+                  </div>
                 </Link>
-                {isAdmin && (
-                  <Link 
-                    to="/admin" 
-                    className="flex items-center gap-1.5 text-gray-700 hover:text-blue-600 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl hover:bg-blue-50 transition border border-transparent hover:border-blue-100"
+                <div className="w-px h-8 bg-gray-100 mx-2 hidden md:block" />
+                <div className="flex items-center gap-2">
+                  {isAdmin && (
+                    <Link 
+                      to="/admin" 
+                      className="flex items-center gap-1.5 text-gray-700 hover:text-blue-600 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl hover:bg-blue-50 transition border border-transparent hover:border-blue-100"
+                    >
+                      <LayoutDashboard size={14} className="md:w-[18px] md:h-[18px]" />
+                      <span className="hidden sm:inline">Admin</span>
+                    </Link>
+                  )}
+                  <button
+                    onClick={handleLogout}
+                    className="flex items-center gap-1.5 text-red-600 hover:bg-red-50 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl transition border border-transparent hover:border-red-100"
                   >
-                    <LayoutDashboard size={14} className="md:w-[18px] md:h-[18px]" />
-                    <span className="hidden sm:inline">Admin</span>
-                  </Link>
-                )}
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-1.5 text-red-600 hover:bg-red-50 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl transition border border-transparent hover:border-red-100"
-                >
-                  <LogOut size={14} className="md:w-[18px] md:h-[18px]" />
-                  <span className="hidden sm:inline">Logout</span>
-                </button>
+                    <LogOut size={14} className="md:w-[18px] md:h-[18px]" />
+                    <span className="hidden sm:inline">Logout</span>
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-1 md:gap-3">

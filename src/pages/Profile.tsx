@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { db } from '../lib/firebase';
+import { updateProfile } from 'firebase/auth';
+import { auth, db } from '../lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { UserProfile } from '../types';
 import { motion } from 'motion/react';
@@ -22,8 +23,8 @@ const Profile: React.FC = () => {
         const data = docSnap.data() as UserProfile;
         setProfile(data);
         setFormData({ 
-          displayName: data.displayName || '', 
-          photoURL: data.photoURL || '', 
+          displayName: data.displayName || user.displayName || '', 
+          photoURL: data.photoURL || user.photoURL || '', 
           bio: data.bio || '' 
         });
       }
@@ -34,14 +35,25 @@ const Profile: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user || !auth.currentUser) return;
     setSaving(true);
     try {
-      await updateDoc(doc(db, 'users', user.uid), formData);
+      // Sync to Firebase Auth
+      await updateProfile(auth.currentUser, {
+        displayName: formData.displayName,
+        photoURL: formData.photoURL
+      });
+
+      // Sync to Firestore
+      await updateDoc(doc(db, 'users', user.uid), {
+        ...formData,
+        updatedAt: new Date()
+      });
+
       setProfile(prev => prev ? { ...prev, ...formData } : null);
       setEditMode(false);
     } catch (err) {
-      alert('Failed to update profile');
+      alert('Failed to update profile identity');
     }
     setSaving(false);
   };
