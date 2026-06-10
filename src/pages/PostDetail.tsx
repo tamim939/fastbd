@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { doc, getDoc, updateDoc, increment } from 'firebase/firestore';
 import { db } from '../lib/firebase';
 import { Post } from '../types';
@@ -11,8 +11,9 @@ import { Download, Calendar, Tag, ArrowLeft, Share2, Eye, ShieldCheck, Loader2 }
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const [post, setPost] = useState<Post | null>(location.state?.post || null);
+  const [loading, setLoading] = useState(!location.state?.post);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +77,7 @@ const PostDetail: React.FC = () => {
       </button>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-2xl shadow-blue-500/5"
       >
@@ -115,11 +116,7 @@ const PostDetail: React.FC = () => {
           </h1>
           <p className="text-blue-600 font-black text-[10px] uppercase tracking-[0.3em] mb-8">Fast BD • Premium Content</p>
 
-          <div className="prose prose-blue max-w-none text-gray-600 text-lg leading-relaxed mb-12 whitespace-pre-line">
-            {post.description}
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-4 mb-10">
             {post.buttons?.map((btn, idx) => (
               <div key={idx} className="flex justify-center">
                 <a
@@ -134,6 +131,10 @@ const PostDetail: React.FC = () => {
                 </a>
               </div>
             ))}
+          </div>
+
+          <div className="prose prose-blue max-w-none text-gray-600 text-lg leading-relaxed mb-12 whitespace-pre-line border-t border-gray-50 pt-10">
+            {post.description}
           </div>
 
           <div className="mt-12">

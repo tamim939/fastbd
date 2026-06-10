@@ -47,7 +47,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       className="group bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 flex flex-col h-full"
     >
       <div className="relative aspect-video overflow-hidden">
-        <Link to={`/post/${post.id}`} className="block h-full">
+        <Link to={`/post/${post.id}`} state={{ post }} className="block h-full">
           <img
             src={post.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'}
             alt={post.title}
@@ -67,7 +67,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           {new Date(post.createdAt?.toDate?.() || post.createdAt).toLocaleDateString('en-GB')}
         </div>
 
-        <Link to={`/post/${post.id}`} className="mb-2 block flex-1">
+        <Link to={`/post/${post.id}`} state={{ post }} className="mb-2 block flex-1">
           <h3 className="text-xl font-black text-gray-900 group-hover:text-blue-600 transition leading-[1.3] uppercase tracking-tight">
             {post.title}
           </h3>
@@ -83,6 +83,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           
           <Link
             to={`/post/${post.id}`}
+            state={{ post }}
             className="flex items-center gap-2 bg-[#1877F2] text-white px-5 py-2.5 rounded-full font-black text-[9px] transition-all shadow-xl shadow-blue-200 group-hover:bg-[#115cc1] active:scale-95 uppercase tracking-widest"
           >
             Open
