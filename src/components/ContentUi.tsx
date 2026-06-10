@@ -49,13 +49,17 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       <div className="relative aspect-video overflow-hidden">
         <Link to={`/post/${post.id}`} className="block h-full">
           <img
-            src={post.imageUrl}
+            src={post.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'}
             alt={post.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
           />
-          <div className="absolute top-4 left-4">
-            <span className="bg-[#1877F2] text-white px-5 py-1.5 rounded-full text-[10px] font-black shadow-lg uppercase tracking-[0.2em] border border-white/20">
-              {post.category}
+          <div className="absolute top-4 left-4 flex flex-col gap-2">
+            <span className="bg-[#1877F2]/90 backdrop-blur-md text-white px-5 py-1.5 rounded-full text-[10px] font-black shadow-xl uppercase tracking-[0.2em] border border-white/20 w-fit">
+              {post.category || 'Global'}
+            </span>
+            <span className="bg-green-500/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[8px] font-black shadow-lg uppercase tracking-[0.2em] border border-white/10 w-fit flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
+              Verified Admin
             </span>
           </div>
         </Link>

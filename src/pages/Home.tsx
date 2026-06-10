@@ -46,8 +46,8 @@ const Home: React.FC = () => {
   }, []);
 
   const filteredPosts = posts.filter(post => {
-    const matchesCategory = activeCategory === 'all' || post.category.toLowerCase() === activeCategory.toLowerCase();
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === 'all' || (post.category && post.category.toLowerCase() === activeCategory.toLowerCase());
+    const matchesSearch = post.title && post.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
