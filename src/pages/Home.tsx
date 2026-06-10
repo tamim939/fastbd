@@ -46,7 +46,15 @@ const Home: React.FC = () => {
   }, []);
 
   const filteredPosts = posts.filter(post => {
-    const matchesCategory = activeCategory === 'all' || (post.category && post.category.toLowerCase() === activeCategory.toLowerCase());
+    if (activeCategory === 'all') return post.title && post.title.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Find category obj to match against both slug and name for robustness
+    const categoryObj = categories.find(c => c.slug === activeCategory);
+    const matchesCategory = post.category && (
+      post.category.toLowerCase() === activeCategory.toLowerCase() || 
+      (categoryObj && post.category.toLowerCase() === categoryObj.name.toLowerCase())
+    );
+    
     const matchesSearch = post.title && post.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });

@@ -67,26 +67,26 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           {new Date(post.createdAt?.toDate?.() || post.createdAt).toLocaleDateString('en-GB')}
         </div>
 
-        <Link to={`/post/${post.id}`} className="mb-4 block flex-1">
+        <Link to={`/post/${post.id}`} className="mb-2 block flex-1">
           <h3 className="text-xl font-black text-gray-900 group-hover:text-blue-600 transition leading-[1.3] uppercase tracking-tight">
             {post.title}
           </h3>
         </Link>
 
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between pt-1">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
-              <Download size={14} className="text-blue-600" />
+            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+              <Download size={12} className="text-blue-600" />
             </div>
-            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{post.views || 0} Downloads</span>
+            <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{post.views || 0} Downloads</span>
           </div>
           
           <Link
             to={`/post/${post.id}`}
-            className="flex items-center gap-3 bg-[#1877F2] text-white px-7 py-3 rounded-full font-black text-[10px] transition-all shadow-xl shadow-blue-200 group-hover:bg-[#115cc1] active:scale-95 uppercase tracking-widest"
+            className="flex items-center gap-2 bg-[#1877F2] text-white px-5 py-2.5 rounded-full font-black text-[9px] transition-all shadow-xl shadow-blue-200 group-hover:bg-[#115cc1] active:scale-95 uppercase tracking-widest"
           >
             Open
-            <ChevronRight size={16} />
+            <ChevronRight size={14} />
           </Link>
         </div>
       </div>
