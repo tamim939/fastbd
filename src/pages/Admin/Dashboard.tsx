@@ -568,20 +568,21 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
               
               <div className="bg-white p-6 rounded-[32px] border border-blue-100/30">
                 <h5 className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-4 block">Visual Architecture Preview</h5>
-                <div className="w-full aspect-video rounded-2xl relative overflow-hidden bg-gray-900 mb-4">
+                <div className="w-full aspect-[21/9] rounded-2xl relative overflow-hidden bg-gray-900 mb-4 border border-white/5 shadow-2xl">
                    <img src={settings.popup?.imageUrl || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=1000'} className="w-full h-full object-cover opacity-40" />
                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
-                      <div className="bg-blue-600 text-white text-[6px] px-2 py-0.5 rounded-full mb-1">UPDATE</div>
-                      <div className="text-white text-[10px] font-black uppercase truncate w-full">{settings.popup?.title || 'Announcement Headline'}</div>
-                      <div className="bg-[#1877F2] text-white text-[8px] font-black py-2 px-4 rounded-lg mt-3 w-32 shadow-lg shadow-blue-500/20">JOIN NOW</div>
+                      <div className="bg-blue-600 text-white text-[6px] px-2 py-0.5 rounded-full mb-1">LIVE PREVIEW</div>
+                      <div className="text-white text-[12px] md:text-sm font-black uppercase truncate w-full tracking-tighter">{settings.popup?.title || 'Announcement Headline'}</div>
+                      <div className="bg-[#1877F2] text-white text-[8px] font-black py-2 px-6 rounded-full mt-4 shadow-lg shadow-blue-500/20 uppercase tracking-widest">Action Button</div>
                    </div>
                 </div>
                 <button 
                   type="button" 
                   onClick={onSave}
-                  className="w-full bg-blue-600/10 text-blue-600 font-black py-4 rounded-2xl hover:bg-blue-600 hover:text-white transition-all text-[10px] uppercase tracking-widest"
+                  className="w-full bg-blue-600 text-white font-black py-5 rounded-2xl hover:bg-blue-700 transition-all text-xs uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center justify-center gap-3"
                 >
-                  Save Internal Cache
+                  <Save size={18} />
+                  Save Global Popup Configuration
                 </button>
               </div>
             </div>
