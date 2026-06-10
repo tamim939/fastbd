@@ -64,11 +64,11 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      <Footer />
-
       <div className="flex justify-center py-10 bg-white">
         <BannerAd />
       </div>
+
+      <Footer />
 
       {/* Persistence Ads */}
       <PopunderAd />
