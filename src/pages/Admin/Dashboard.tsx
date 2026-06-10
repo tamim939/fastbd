@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'motion/react';
 const AdminDashboard: React.FC = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'stats' | 'posts' | 'categories' | 'settings' | 'users'>('stats');
+  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'settings'>('posts');
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -23,8 +23,6 @@ const AdminDashboard: React.FC = () => {
     sliderImages: [],
     popup: { isEnabled: false, title: '', imageUrl: '', telegramLink: '' }
   });
-  const [users, setUsers] = useState<UserProfile[]>([]);
-  const [globalStats, setGlobalStats] = useState({ totalVisitors: 0 });
   const [success, setSuccess] = useState('');
 
   useEffect(() => {
@@ -52,15 +50,7 @@ const AdminDashboard: React.FC = () => {
       }
     }, (err) => handleFirestoreError(err, OperationType.GET, 'settings/general'));
 
-    const unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
-      setUsers(snap.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile)));
-    }, (err) => handleFirestoreError(err, OperationType.LIST, 'users'));
-
-    const unsubGlobalStats = onSnapshot(doc(db, 'stats', 'global'), (doc) => {
-      if (doc.exists()) setGlobalStats(doc.data() as any);
-    });
-
-    return () => { unsubPosts(); unsubCats(); unsubSettings(); unsubUsers(); unsubGlobalStats(); };
+    return () => { unsubPosts(); unsubCats(); unsubSettings(); };
   }, [isAdmin]);
 
   const [publishing, setPublishing] = useState(false);
@@ -93,11 +83,9 @@ const AdminDashboard: React.FC = () => {
           
           <nav className="bg-white p-3 rounded-[32px] border border-gray-100 shadow-sm space-y-1">
             {[
-              { id: 'stats', label: 'Analytics', icon: BarChart3 },
               { id: 'posts', label: 'Posts', icon: FileText },
               { id: 'categories', label: 'Categories', icon: Tag },
-              { id: 'users', label: 'Users', icon: Users },
-              { id: 'settings', label: 'Theme', icon: Settings },
+              { id: 'settings', label: 'Home UI', icon: Settings },
             ].map(item => (
               <button
                 key={item.id}
@@ -122,70 +110,12 @@ const AdminDashboard: React.FC = () => {
           )}
 
           <div className="bg-white rounded-[40px] border border-gray-100 p-8 md:p-12 shadow-sm min-h-[700px]">
-            {activeTab === 'stats' && <StatsPanel posts={posts} users={users} globalVisitors={globalStats.totalVisitors} />}
             {activeTab === 'posts' && <PostsPanel posts={posts} categories={categories} />}
             {activeTab === 'categories' && <CategoriesPanel categories={categories} />}
             {activeTab === 'settings' && <SettingsPanel settings={settings} setSettings={setSettings} onSave={handleSaveSettings} publishing={publishing} />}
-            {activeTab === 'users' && <UsersPanel users={users} />}
           </div>
         </main>
       </div>
-    </div>
-  );
-};
-
-const StatsPanel: React.FC<{ posts: Post[], users: UserProfile[], globalVisitors: number }> = ({ posts, users, globalVisitors }) => {
-  const totalViews = posts.reduce((acc, p) => acc + (p.views || 0), 0);
-  const topPost = [...posts].sort((a, b) => (b.views || 0) - (a.views || 0))[0];
-
-  return (
-    <div className="space-y-12">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-indigo-50 p-8 rounded-[32px] border border-indigo-100">
-          <div className="bg-indigo-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-indigo-200">
-            <Eye size={24} />
-          </div>
-          <p className="text-indigo-900/60 font-black uppercase text-[10px] tracking-widest mb-1">Total Visitors</p>
-          <h4 className="text-4xl font-black text-indigo-900 tracking-tighter">{globalVisitors}</h4>
-        </div>
-        <div className="bg-blue-50 p-8 rounded-[32px] border border-blue-100">
-          <div className="bg-blue-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-blue-200">
-            <TrendingUp size={24} />
-          </div>
-          <p className="text-blue-900/60 font-black uppercase text-[10px] tracking-widest mb-1">Total Downloads</p>
-          <h4 className="text-4xl font-black text-blue-900 tracking-tighter">{totalViews}</h4>
-        </div>
-        <div className="bg-amber-50 p-8 rounded-[32px] border border-amber-100">
-          <div className="bg-amber-500 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-amber-200">
-            <Users size={24} />
-          </div>
-          <p className="text-amber-900/60 font-black uppercase text-[10px] tracking-widest mb-1">Active Users</p>
-          <h4 className="text-4xl font-black text-amber-900 tracking-tighter">{users.length}</h4>
-        </div>
-        <div className="bg-emerald-50 p-8 rounded-[32px] border border-emerald-100">
-          <div className="bg-emerald-600 w-12 h-12 rounded-2xl flex items-center justify-center text-white mb-6 shadow-lg shadow-emerald-200">
-            <FileText size={24} />
-          </div>
-          <p className="text-emerald-900/60 font-black uppercase text-[10px] tracking-widest mb-1">Total Content</p>
-          <h4 className="text-4xl font-black text-emerald-900 tracking-tighter">{posts.length}</h4>
-        </div>
-      </div>
-
-      {topPost && (
-        <div className="bg-gray-50 p-8 rounded-[40px] border border-gray-100">
-          <h5 className="text-xs font-black uppercase text-gray-400 tracking-widest mb-6">Top Performing Resource</h5>
-          <div className="flex items-center gap-6">
-            <img src={topPost.imageUrl} className="w-24 h-24 rounded-3xl object-cover shadow-xl" />
-            <div>
-              <h6 className="text-2xl font-black text-gray-900 mb-2">{topPost.title}</h6>
-              <div className="flex items-center gap-4 text-gray-400 font-bold text-sm">
-                <span className="flex items-center gap-1.5"><Eye size={16} /> {topPost.views || 0} VIEWS</span>
-                <span className="flex items-center gap-1.5 text-blue-600 bg-blue-50 px-3 py-1 rounded-full uppercase text-[10px]">{topPost.category}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
@@ -462,13 +392,30 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
 
   return (
     <form onSubmit={onSave} className="max-w-4xl">
-      <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">UI ARCHITECTURE</h3>
+      <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">HOME INTERFACE</h3>
       
       <div className="space-y-16">
         {/* Notice Section */}
-        <div className="space-y-3">
-          <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Landing Page Notice</label>
-          <textarea rows={4} className="w-full bg-gray-50 border border-gray-100 p-6 rounded-[32px] outline-none focus:bg-white focus:border-blue-500 font-bold transition text-lg" value={settings.notice} onChange={e => setSettings({...settings, notice: e.target.value})} />
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] ml-1">Scrolling Notice Board</label>
+            {settings.notice && (
+              <button 
+                type="button"
+                onClick={() => setSettings({...settings, notice: ''})}
+                className="text-red-500 font-bold text-[10px] uppercase tracking-widest hover:underline flex items-center gap-1"
+              >
+                <Trash2 size={12} /> Clear Notice
+              </button>
+            )}
+          </div>
+          <textarea 
+            rows={4} 
+            placeholder="Write your scrolling notice here..."
+            className="w-full bg-gray-50 border border-gray-100 p-6 rounded-[32px] outline-none focus:bg-white focus:border-blue-500 font-bold transition text-lg" 
+            value={settings.notice} 
+            onChange={e => setSettings({...settings, notice: e.target.value})} 
+          />
         </div>
 
         {/* Popup Settings Section */}
@@ -682,55 +629,6 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
         </button>
       </div>
     </form>
-  );
-};
-
-const UsersPanel: React.FC<{ users: UserProfile[] }> = ({ users }) => {
-  const handleDeleteUser = async (uid: string) => {
-    if (confirm('Permanently delete this user profile? The Auth account will remain but their app data will be gone.')) {
-      try { await deleteDoc(doc(db, 'users', uid)); } catch (err) { alert(err); }
-    }
-  };
-
-  return (
-    <div className="w-full overflow-hidden">
-       <h3 className="text-3xl font-black text-gray-900 uppercase tracking-tighter mb-12">User Directory</h3>
-       <div className="overflow-x-auto -mx-8 md:-mx-12 px-8 md:px-12">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr className="text-left text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] border-b border-gray-100">
-              <th className="pb-8 pl-4">Account Profile</th>
-              <th className="pb-8">Email Identifier</th>
-              <th className="pb-8">Permission Role</th>
-              <th className="pb-8">Joined On</th>
-              <th className="pb-8 pr-4 text-right">Control</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {users.map((u) => (
-              <tr key={u.uid} className="hover:bg-gray-50/50 transition">
-                <td className="py-6 pl-4">
-                   <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center font-black text-blue-600 text-sm">{u.displayName?.[0] || 'U'}</div>
-                      <span className="font-black text-gray-900 tracking-tight">{u.displayName || 'Anonymous'}</span>
-                   </div>
-                </td>
-                <td className="py-6 text-gray-400 text-sm font-bold tracking-tight">{u.email}</td>
-                <td className="py-6">
-                   <span className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest ${u.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}`}>
-                    {u.role}
-                   </span>
-                </td>
-                <td className="py-6 text-gray-400 text-[11px] font-bold uppercase tracking-widest">{u.joinedAt?.toDate?.()?.toLocaleDateString() || 'PRE-RELEASE'}</td>
-                <td className="py-6 pr-4 text-right">
-                   <button onClick={() => handleDeleteUser(u.uid)} className="p-3 bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white transition shadow-sm"><Trash2 size={18} /></button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-       </div>
-    </div>
   );
 };
 

@@ -88,11 +88,6 @@ const Home: React.FC = () => {
       {/* Main Content Area */}
       <div className="mt-8 bg-gray-50/50 rounded-[24px] md:rounded-[40px] p-5 md:p-10 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-6">
-          <div>
-            <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight uppercase">Exclusive Resources</h2>
-            <p className="text-gray-400 font-bold mt-1 text-[10px] md:text-xs uppercase tracking-widest">Premium quality downloads and tools</p>
-          </div>
-          
           <div className="relative group w-full md:w-80">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition" size={20} />
             <input
