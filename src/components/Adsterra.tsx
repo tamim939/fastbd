@@ -24,29 +24,34 @@ export const SocialBarAd: React.FC = () => {
 };
 
 export const BannerAd: React.FC = () => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const adHtml = `
+    <html>
+      <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center;">
+        <script type="text/javascript">
+          atOptions = {
+            'key' : 'b4af71e52314f97d8cae6b05b7315210',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        </script>
+        <script type="text/javascript" src="https://www.highperformanceformat.com/b4af71e52314f97d8cae6b05b7315210/invoke.js"></script>
+      </body>
+    </html>
+  `;
 
-  useEffect(() => {
-    if (containerRef.current && containerRef.current.childNodes.length === 0) {
-      const atOptionsScript = document.createElement('script');
-      atOptionsScript.type = 'text/javascript';
-      atOptionsScript.innerHTML = `
-        atOptions = {
-          'key' : 'b4af71e52314f97d8cae6b05b7315210',
-          'format' : 'iframe',
-          'height' : 60,
-          'width' : 468,
-          'params' : {}
-        };
-      `;
-      containerRef.current.appendChild(atOptionsScript);
-
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.src = 'https://www.highperformanceformat.com/b4af71e52314f97d8cae6b05b7315210/invoke.js';
-      containerRef.current.appendChild(invokeScript);
-    }
-  }, []);
-
-  return <div ref={containerRef} className="flex justify-center my-4 overflow-hidden min-h-[60px]"></div>;
+  return (
+    <div className="flex justify-center my-4 overflow-hidden min-h-[60px] w-full">
+      <iframe
+        title="Advertisement"
+        srcDoc={adHtml}
+        width="468"
+        height="60"
+        frameBorder="0"
+        scrolling="no"
+        className="max-w-full"
+      ></iframe>
+    </div>
+  );
 };

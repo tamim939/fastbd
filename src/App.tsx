@@ -48,6 +48,11 @@ const AppContent: React.FC = () => {
       
       <Navbar />
       
+      {/* Top Banner Ad */}
+      <div className="flex justify-center py-4 bg-gray-50/30">
+        <BannerAd />
+      </div>
+      
       <main className="min-h-[calc(100vh-16rem)]">
         <Routes>
           <Route path="/" element={<Home />} />
@@ -60,7 +65,8 @@ const AppContent: React.FC = () => {
         </Routes>
       </main>
 
-      <div className="flex justify-center py-10 bg-white">
+      {/* Bottom Banner Ad */}
+      <div className="flex justify-center py-10 border-t border-gray-100 bg-white">
         <BannerAd />
       </div>
 

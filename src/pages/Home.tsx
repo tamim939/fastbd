@@ -79,6 +79,12 @@ const Home: React.FC = () => {
         <ImageSlider images={settings?.sliderImages || []} />
         <NoticeBoard notice={settings?.notice || ''} />
       </motion.div>
+
+      {/* Ad Space */}
+      <div className="my-6 md:my-10">
+        <BannerAd />
+      </div>
+
       {/* Main Content Area */}
       <div className="bg-gray-50/50 rounded-[24px] md:rounded-[40px] p-5 md:p-10 border border-gray-100">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-6">
@@ -116,6 +122,10 @@ const Home: React.FC = () => {
         )}
       </div>
 
+      {/* Bottom Ad */}
+      <div className="mt-12">
+        <BannerAd />
+      </div>
     </div>
   );
 };

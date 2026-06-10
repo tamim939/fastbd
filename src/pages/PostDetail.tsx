@@ -76,6 +76,10 @@ const PostDetail: React.FC = () => {
         Back to Gallery
       </button>
 
+      <div className="mb-8">
+        <BannerAd />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -137,6 +141,10 @@ const PostDetail: React.FC = () => {
             ))}
           </div>
 
+          <div className="mt-8">
+             <BannerAd />
+          </div>
+
           <div className="flex justify-center mt-12 pt-12 border-t border-gray-50">
             <button className="flex items-center gap-2 text-gray-400 hover:text-blue-600 font-bold uppercase tracking-widest text-xs transition">
               <Share2 size={16} />
@@ -145,6 +153,10 @@ const PostDetail: React.FC = () => {
           </div>
         </div>
       </motion.div>
+
+      <div className="mt-12">
+        <BannerAd />
+      </div>
 
       <div className="mt-12 text-center">
         <p className="text-gray-400 text-sm">
