@@ -44,7 +44,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group bg-white rounded-[40px] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 flex flex-col h-full"
+      className="group bg-white rounded-[24px] overflow-hidden border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 flex flex-col h-full"
     >
       <div className="relative aspect-video overflow-hidden">
         <Link to={`/post/${post.id}`} className="block h-full">
