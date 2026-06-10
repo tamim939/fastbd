@@ -57,10 +57,6 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
             <span className="bg-[#1877F2]/90 backdrop-blur-md text-white px-5 py-1.5 rounded-full text-[10px] font-black shadow-xl uppercase tracking-[0.2em] border border-white/20 w-fit">
               {post.category || 'Global'}
             </span>
-            <span className="bg-green-500/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[8px] font-black shadow-lg uppercase tracking-[0.2em] border border-white/10 w-fit flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse" />
-              Verified Admin
-            </span>
           </div>
         </Link>
       </div>
@@ -77,7 +73,7 @@ export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
           </h3>
         </Link>
 
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-50">
+        <div className="flex items-center justify-between pt-2">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center">
               <Download size={14} className="text-blue-600" />

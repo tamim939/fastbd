@@ -113,13 +113,9 @@ const PostDetail: React.FC = () => {
           <h1 className="text-3xl md:text-5xl font-black text-gray-900 mb-2 tracking-tight leading-tight uppercase">
             {post.title}
           </h1>
-          <p className="text-blue-600 font-black text-[10px] uppercase tracking-[0.3em] mb-4">Fast BD • Premium Content</p>
+          <p className="text-blue-600 font-black text-[10px] uppercase tracking-[0.3em] mb-6">Fast BD • Premium Content</p>
 
-          <div className="prose prose-blue max-w-none text-gray-600 text-lg leading-relaxed mb-6 whitespace-pre-line">
-            {post.description}
-          </div>
-
-          <div className="space-y-4">
+          <div className="space-y-4 mb-10">
             {post.buttons?.map((btn, idx) => (
               <div key={idx} className="flex justify-center">
                 <a
@@ -134,6 +130,10 @@ const PostDetail: React.FC = () => {
                 </a>
               </div>
             ))}
+          </div>
+
+          <div className="prose prose-blue max-w-none text-gray-600 text-lg leading-relaxed mb-6 whitespace-pre-line border-t border-gray-50 pt-10">
+            {post.description}
           </div>
 
           <div className="mt-12">
