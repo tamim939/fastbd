@@ -1,11 +1,31 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
-import { auth, db, handleFirestoreError, OperationType } from './firebase';
+import { doc, getDoc, setDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { db } from './firebase';
 import { UserProfile } from '../types';
 
+declare global {
+  interface Window {
+    Telegram: {
+      WebApp: {
+        initData: string;
+        initDataUnsafe: {
+          user?: {
+            id: number;
+            first_name: string;
+            last_name?: string;
+            username?: string;
+            photo_url?: string;
+          };
+        };
+        ready: () => void;
+        expand: () => void;
+      };
+    };
+  }
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: { uid: string } | null;
   profile: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
@@ -21,43 +41,71 @@ const AuthContext = createContext<AuthContextType>({
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<{ uid: string } | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let unsubProfile: (() => void) | null = null;
-
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        // Use onSnapshot for real-time profile updates
-        unsubProfile = onSnapshot(doc(db, 'users', user.uid), (docSnap) => {
+    const tg = window.Telegram?.WebApp;
+    
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      
+      const tgUser = tg.initDataUnsafe?.user;
+      
+      if (tgUser) {
+        const uid = `tg_${tgUser.id}`;
+        setUser({ uid });
+        
+        // Auto-fetch or create profile
+        const userRef = doc(db, 'users', uid);
+        
+        const unsubscribe = onSnapshot(userRef, async (docSnap) => {
           if (docSnap.exists()) {
             setProfile(docSnap.data() as UserProfile);
           } else {
-            setProfile(null);
+            // Create profile automatically
+            const newProfile: UserProfile = {
+              uid,
+              displayName: `${tgUser.first_name} ${tgUser.last_name || ''}`.trim(),
+              photoURL: tgUser.photo_url || '',
+              role: 'user',
+              joinedAt: serverTimestamp(),
+              telegramId: tgUser.id,
+              username: tgUser.username || '',
+              email: '', // Not available from telegram basic user data
+              downloadCount: 0
+            };
+            
+            // Hardcoded admins based on request history
+            const adminUsernames = ['rsjonayed07', 'jonayed', 'TRADER_TAMIM_3'];
+            if (tgUser.username && adminUsernames.includes(tgUser.username)) {
+              newProfile.role = 'admin';
+            }
+
+            await setDoc(userRef, newProfile);
+            setProfile(newProfile);
           }
           setLoading(false);
-        }, (error) => {
-          console.error("Profile listen error:", error);
+        }, (err) => {
+          console.error("Telegram Profile Init Error:", err);
           setLoading(false);
         });
+
+        return () => unsubscribe();
       } else {
-        if (unsubProfile) unsubProfile();
-        setProfile(null);
+        // Not running in Telegram or user data missing
+        console.warn("Telegram data missing. Running in browser mode?");
         setLoading(false);
       }
-    });
-
-    return () => {
-      unsubscribe();
-      if (unsubProfile) unsubProfile();
-    };
+    } else {
+      console.warn("Telegram WebApp script not detected.");
+      setLoading(false);
+    }
   }, []);
 
-  const adminEmails = ['rsjonayed07@gmail.com', 'rsjonayed0766@gmail.com'];
-  const isAdmin = profile?.role === 'admin' || (user?.email && adminEmails.includes(user.email));
+  const isAdmin = profile?.role === 'admin';
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, isAdmin }}>

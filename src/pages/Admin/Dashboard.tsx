@@ -7,17 +7,18 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Edit2, Trash2, Settings, FileText, Tag, Users, 
   Save, X, Image as ImageIcon, Link as LinkIcon, Info,
-  CheckCircle2, AlertCircle, Loader2, BarChart3, TrendingUp, Eye, Download, Camera
+  CheckCircle2, AlertCircle, Loader2, BarChart3, TrendingUp, Eye, Download, Camera, ShieldCheck
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 const AdminDashboard: React.FC = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'settings'>('posts');
+  const [activeTab, setActiveTab] = useState<'posts' | 'categories' | 'settings' | 'users'>('posts');
   
   const [posts, setPosts] = useState<Post[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [usersList, setUsersList] = useState<UserProfile[]>([]);
   const [settings, setSettings] = useState<AppSettings>({ 
     notice: '', 
     sliderImages: [],
@@ -50,7 +51,11 @@ const AdminDashboard: React.FC = () => {
       }
     }, (err) => handleFirestoreError(err, OperationType.GET, 'settings/general'));
 
-    return () => { unsubPosts(); unsubCats(); unsubSettings(); };
+    const unsubUsers = onSnapshot(collection(db, 'users'), (snap) => {
+      setUsersList(snap.docs.map(doc => ({ uid: doc.id, ...doc.data() } as UserProfile)));
+    });
+
+    return () => { unsubPosts(); unsubCats(); unsubSettings(); unsubUsers(); };
   }, [isAdmin]);
 
   const [publishing, setPublishing] = useState(false);
@@ -85,6 +90,7 @@ const AdminDashboard: React.FC = () => {
             {[
               { id: 'posts', label: 'Posts', icon: FileText },
               { id: 'categories', label: 'Categories', icon: Tag },
+              { id: 'users', label: 'User Index', icon: Users },
               { id: 'settings', label: 'Home UI', icon: Settings },
             ].map(item => (
               <button
@@ -110,8 +116,11 @@ const AdminDashboard: React.FC = () => {
           )}
 
           <div className="bg-white rounded-[40px] border border-gray-100 p-8 md:p-12 shadow-sm min-h-[700px]">
+            <SummaryStats posts={posts} usersCount={usersList.length} />
+            
             {activeTab === 'posts' && <PostsPanel posts={posts} categories={categories} />}
             {activeTab === 'categories' && <CategoriesPanel categories={categories} />}
+            {activeTab === 'users' && <UsersPanel users={usersList} />}
             {activeTab === 'settings' && <SettingsPanel settings={settings} setSettings={setSettings} onSave={handleSaveSettings} publishing={publishing} />}
           </div>
         </main>
@@ -147,7 +156,7 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
       if (editingPost) {
         await updateDoc(doc(db, 'posts', editingPost.id), { ...formData, updatedAt: serverTimestamp() });
       } else {
-        await addDoc(collection(db, 'posts'), { ...formData, createdAt: serverTimestamp(), authorId: user.uid, views: 0 });
+        await addDoc(collection(db, 'posts'), { ...formData, createdAt: serverTimestamp(), authorId: user.uid, views: 0, downloads: 0 });
       }
       setShowModal(false);
       alert('SUCCESS: Post synchronized to Global Index!');
@@ -196,9 +205,15 @@ const PostsPanel: React.FC<{ posts: Post[], categories: Category[] }> = ({ posts
              </div>
              <h4 className="font-black text-gray-900 mb-6 line-clamp-1 text-sm uppercase tracking-tight">{post.title}</h4>
              <div className="flex items-center justify-between border-t border-gray-50 pt-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center"><Download size={10} className="text-blue-600" /></div>
-                  <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{post.views || 0}</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <Eye size={12} className="text-gray-400" />
+                    <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{post.views || 0} VIEWS</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Download size={12} className="text-blue-600" />
+                    <span className="text-[9px] font-black text-blue-600 uppercase tracking-widest">{post.downloads || 0} DOWNLOADS</span>
+                  </div>
                 </div>
                 <div className="flex gap-2">
                    <button onClick={() => handleEdit(post)} className="p-2 bg-gray-50 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition"><Edit2 size={14} /></button>
@@ -633,3 +648,97 @@ const SettingsPanel: React.FC<{ settings: AppSettings, setSettings: any, onSave:
 };
 
 export default AdminDashboard;
+
+const SummaryStats: React.FC<{ posts: Post[], usersCount: number }> = ({ posts, usersCount }) => {
+  const totalViews = posts.reduce((acc, p) => acc + (p.views || 0), 0);
+  const totalDownloads = posts.reduce((acc, p) => acc + (p.downloads || 0), 0);
+
+  const stats = [
+    { label: 'Total Resources', value: posts.length, icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
+    { label: 'Total Views', value: totalViews, icon: Eye, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { label: 'Total Downloads', value: totalDownloads, icon: Download, color: 'text-green-600', bg: 'bg-green-50' },
+    { label: 'Registered Users', value: usersCount, icon: Users, color: 'text-orange-600', bg: 'bg-orange-50' },
+  ];
+
+  return (
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+      {stats.map((stat, i) => (
+        <div key={i} className="bg-white border border-gray-100 p-6 rounded-[32px] shadow-sm flex flex-col items-center text-center">
+          <div className={`${stat.bg} p-3 rounded-2xl mb-4`}>
+            <stat.icon size={24} className={stat.color} />
+          </div>
+          <div className="text-2xl font-black text-gray-900 tracking-tighter mb-1">{stat.value.toLocaleString()}</div>
+          <div className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em]">{stat.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const UsersPanel: React.FC<{ users: UserProfile[] }> = ({ users }) => {
+  return (
+    <div className="space-y-8">
+      <div>
+        <h3 className="text-2xl font-black text-gray-900 tracking-tighter uppercase">User Directory</h3>
+        <p className="text-gray-400 font-bold text-[10px] uppercase tracking-widest mt-1">Information for {users.length} registered members</p>
+      </div>
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-left border-separate border-spacing-y-4">
+          <thead>
+            <tr className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+              <th className="px-6 pb-2">User</th>
+              <th className="px-6 pb-2">Email</th>
+              <th className="px-6 pb-2">Role</th>
+              <th className="px-6 pb-2">Downloads</th>
+              <th className="px-6 pb-2 text-right">Joined At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(user => (
+              <tr key={user.uid} className="bg-gray-50/50 hover:bg-gray-50 transition group transition-all duration-300">
+                <td className="px-6 py-4 rounded-l-[24px]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center font-black text-blue-600 text-xs overflow-hidden">
+                      {user.photoURL ? <img src={user.photoURL} alt="" /> : user.displayName?.charAt(0) || 'U'}
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 text-sm">{user.displayName || 'Anonymous User'}</div>
+                      <div className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">ID: {user.uid.slice(0, 8)}...</div>
+                    </div>
+                  </div>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="text-xs font-medium text-gray-600">{user.email}</div>
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`text-[8px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-sm ${user.role === 'admin' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-500'}`}>
+                    {user.role}
+                  </span>
+                </td>
+                <td className="px-6 py-4">
+                  <div className="flex items-center gap-2">
+                    <Download size={12} className="text-blue-600" />
+                    <span className="text-xs font-black text-gray-900">{user.downloadCount || 0}</span>
+                  </div>
+                </td>
+                <td className="px-6 py-4 rounded-r-[24px] text-right">
+                  <div className="text-[10px] font-bold text-gray-400">
+                    {user.joinedAt?.toDate ? user.joinedAt.toDate().toLocaleDateString() : 'N/A'}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {users.length === 0 && (
+          <div className="py-20 text-center bg-gray-50 rounded-[40px] border border-dashed border-gray-200">
+             <Users className="text-gray-200 mx-auto mb-4" size={48} />
+             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">No users found in database</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+

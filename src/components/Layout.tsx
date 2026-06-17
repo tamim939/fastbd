@@ -8,11 +8,6 @@ export const Navbar: React.FC = () => {
   const { user, profile, isAdmin } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await auth.signOut();
-    navigate('/');
-  };
-
   return (
     <nav className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,13 +32,13 @@ export const Navbar: React.FC = () => {
                     {profile?.photoURL ? (
                       <img src={profile.photoURL} alt="P" className="w-full h-full object-cover" />
                     ) : (
-                      profile?.displayName?.[0] || user.displayName?.[0] || 'U'
+                      profile?.displayName?.[0] || 'U'
                     )}
                   </div>
                   <div className="hidden md:block text-left">
-                    <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest leading-none mb-1">Authenticated</p>
+                    <p className="text-[10px] font-black uppercase text-blue-600 tracking-widest leading-none mb-1">Telegram User</p>
                     <p className="text-sm font-black text-gray-900 tracking-tighter leading-none truncate max-w-[120px]">
-                      {profile?.displayName || user.displayName || 'Account'}
+                      {profile?.displayName || 'User Account'}
                     </p>
                   </div>
                 </Link>
@@ -58,19 +53,13 @@ export const Navbar: React.FC = () => {
                       <span className="hidden sm:inline">Admin</span>
                     </Link>
                   )}
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-1.5 text-red-600 hover:bg-red-50 font-black text-[10px] uppercase tracking-widest px-3 py-2 rounded-xl transition border border-transparent hover:border-red-100"
-                  >
-                    <LogOut size={14} className="md:w-[18px] md:h-[18px]" />
-                    <span className="hidden sm:inline">Logout</span>
-                  </button>
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-1 md:gap-3">
-                <Link to="/login" className="text-gray-900 font-bold text-xs uppercase tracking-widest px-4 py-2 hover:text-blue-600 transition">Login</Link>
-                <Link to="/register" className="bg-blue-600 text-white font-black text-[10px] uppercase tracking-widest px-4 md:px-6 py-2.5 rounded-xl hover:bg-blue-700 shadow-xl shadow-blue-100 transition whitespace-nowrap">Join Now</Link>
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
+                   <User size={16} className="text-gray-400" />
+                </div>
               </div>
             )}
           </div>

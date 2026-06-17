@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../lib/AuthContext';
-import { updateProfile } from 'firebase/auth';
-import { auth, db } from '../lib/firebase';
+import { db } from '../lib/firebase';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { UserProfile } from '../types';
 import { motion } from 'motion/react';
-import { User, Mail, Calendar, Download, Settings, Camera, Save, Loader2, X } from 'lucide-react';
+import { User, Mail, Calendar, Download, Settings, Camera, Save, Loader2, X, Send } from 'lucide-react';
 
 const Profile: React.FC = () => {
   const { user } = useAuth();
@@ -16,15 +15,18 @@ const Profile: React.FC = () => {
   const [formData, setFormData] = useState({ displayName: '', photoURL: '', bio: '' });
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     const fetchProfile = async () => {
       const docSnap = await getDoc(doc(db, 'users', user.uid));
       if (docSnap.exists()) {
         const data = docSnap.data() as UserProfile;
         setProfile(data);
         setFormData({ 
-          displayName: data.displayName || user.displayName || '', 
-          photoURL: data.photoURL || user.photoURL || '', 
+          displayName: data.displayName || '', 
+          photoURL: data.photoURL || '', 
           bio: data.bio || '' 
         });
       }
@@ -35,16 +37,10 @@ const Profile: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !auth.currentUser) return;
+    if (!user) return;
     setSaving(true);
     try {
-      // Sync to Firebase Auth
-      await updateProfile(auth.currentUser, {
-        displayName: formData.displayName,
-        photoURL: formData.photoURL
-      });
-
-      // Sync to Firestore
+      // Sync only to Firestore now (Identity is linked to Telegram ID)
       await updateDoc(doc(db, 'users', user.uid), {
         ...formData,
         updatedAt: new Date()
@@ -125,11 +121,11 @@ const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center gap-4 bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
                     <div className="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-100">
-                      <Mail size={20} />
+                      <Send size={20} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Contact</span>
-                      <span className="text-gray-900 font-bold">{profile.email}</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Telegram</span>
+                      <span className="text-gray-900 font-bold">@{profile.username || 'N/A'}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 bg-gray-50/50 p-6 rounded-3xl border border-gray-100">
@@ -137,7 +133,7 @@ const Profile: React.FC = () => {
                       <Calendar size={20} />
                     </div>
                     <div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Member Since</span>
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block mb-0.5">Joined Network</span>
                       <span className="text-gray-900 font-bold">{profile.joinedAt?.toDate?.()?.toLocaleDateString() || 'Recently'}</span>
                     </div>
                   </div>
@@ -156,6 +152,26 @@ const Profile: React.FC = () => {
                   <p className="text-xl font-black tracking-widest uppercase">{profile.role}</p>
                 </div>
               </div>
+
+              {profile.role === 'admin' && (
+                <div className="mt-12 bg-blue-50 border border-blue-100 p-8 rounded-[40px] flex flex-col md:flex-row items-center justify-between gap-6">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-blue-600 p-4 rounded-3xl text-white shadow-xl shadow-blue-200">
+                      <Settings size={28} />
+                    </div>
+                    <div className="text-center md:text-left">
+                      <h3 className="text-xl font-black text-gray-900 tracking-tighter uppercase">Admin Control Center</h3>
+                      <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest mt-1">Platform Management & Stats</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => navigate('/admin')}
+                    className="w-full md:w-auto bg-gray-900 text-white font-black text-xs uppercase tracking-[0.2em] px-10 py-4 rounded-2xl hover:bg-black transition-all shadow-xl shadow-gray-200"
+                  >
+                    Open Dashboard
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <form onSubmit={handleSave} className="space-y-8 max-w-2xl">

@@ -14,6 +14,7 @@ export interface Post {
   updatedAt?: any;
   authorId: string;
   views: number;
+  downloads: number;
 }
 
 export interface Category {
@@ -40,11 +41,13 @@ export interface AppSettings {
 
 export interface UserProfile {
   uid: string;
-  email: string;
+  email?: string;
   displayName: string;
   photoURL?: string;
   role: 'admin' | 'user';
   joinedAt: any;
   downloadCount?: number;
   bio?: string;
+  telegramId?: number;
+  username?: string;
 }

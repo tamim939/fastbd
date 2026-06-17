@@ -9,8 +9,6 @@ import { db } from './lib/firebase';
 // Pages
 import Home from './pages/Home';
 import PostDetail from './pages/PostDetail';
-import Login from './pages/Login';
-import Register from './pages/Register';
 import AdminDashboard from './pages/Admin/Dashboard';
 import Profile from './pages/Profile';
 
@@ -57,8 +55,6 @@ const AppContent: React.FC = () => {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/post/:id" element={<PostDetail />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<Navigate to="/" />} />

@@ -17,16 +17,23 @@ const PostDetail: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPost = async () => {
+    const fetchAndViews = async () => {
       if (!id) return;
       const docRef = doc(db, 'posts', id);
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        setPost({ id: docSnap.id, ...docSnap.data() } as Post);
+        const postData = { id: docSnap.id, ...docSnap.data() } as Post;
+        setPost(postData);
+        // Increment views
+        try {
+          await updateDoc(docRef, { views: increment(1) });
+        } catch (err) {
+          console.error("View count error:", err);
+        }
       }
       setLoading(false);
     };
-    fetchPost();
+    fetchAndViews();
   }, [id]);
 
   const handleDownloadClick = async (e: React.MouseEvent) => {
@@ -38,14 +45,14 @@ const PostDetail: React.FC = () => {
     if (!id || !post) return;
     try {
       const docRef = doc(db, 'posts', id);
-      await updateDoc(docRef, { views: increment(1) });
+      await updateDoc(docRef, { downloads: increment(1) });
       
       const userRef = doc(db, 'users', user.uid);
       await updateDoc(userRef, { downloadCount: increment(1) });
 
-      setPost(prev => prev ? { ...prev, views: (prev.views || 0) + 1 } : null);
+      setPost(prev => prev ? { ...prev, downloads: (prev.downloads || 0) + 1 } : null);
     } catch (err) {
-      console.error('Failed to increment views:', err);
+      console.error('Failed to increment metrics:', err);
     }
   };
 
@@ -108,6 +115,10 @@ const PostDetail: React.FC = () => {
             <div className="flex items-center gap-2 font-medium">
               <Eye size={18} className="text-blue-500/50" />
               {post.views || 0} Views
+            </div>
+            <div className="flex items-center gap-2 font-medium">
+              <Download size={18} className="text-blue-500/50" />
+              {post.downloads || 0} Downloads
             </div>
             <div className="flex items-center gap-2 font-medium">
               <ShieldCheck size={18} className="text-green-500/50" />
