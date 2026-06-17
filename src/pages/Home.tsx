@@ -86,14 +86,14 @@ const Home: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-gray-50/50 rounded-[24px] md:rounded-[40px] p-5 md:p-10 border border-gray-100">
-        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 md:mb-10 gap-6">
+      <div className="bg-white md:bg-gray-50/50 rounded-[20px] md:rounded-[40px] p-4 md:p-10 md:border border-gray-100">
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 md:mb-10 gap-6">
           <div className="relative group w-full md:w-80">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition" size={18} />
             <input
               type="text"
               placeholder="Search everything..."
-              className="w-full bg-white border border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-12 pr-4 outline-none transition-all shadow-sm"
+              className="w-full bg-white md:bg-white border border-gray-100 md:border-gray-200 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 rounded-xl md:rounded-2xl py-2.5 md:py-3.5 pl-11 md:pl-12 pr-4 outline-none transition-all shadow-sm text-sm"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -107,7 +107,7 @@ const Home: React.FC = () => {
         />
 
         {filteredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
             {filteredPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

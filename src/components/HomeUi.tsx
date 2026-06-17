@@ -23,7 +23,7 @@ export const ImageSlider: React.FC<SliderProps> = ({ images }) => {
   const currentSlider = images[index];
 
   return (
-    <div className="relative w-full h-[180px] md:h-[280px] overflow-hidden rounded-[24px] md:rounded-[40px] shadow-2xl mt-4 group">
+    <div className="relative w-full h-[140px] md:h-[280px] overflow-hidden rounded-[20px] md:rounded-[40px] shadow-2xl mt-4 group">
       <a 
         href={currentSlider.link || '#'} 
         target="_blank" 
@@ -80,22 +80,22 @@ export const ImageSlider: React.FC<SliderProps> = ({ images }) => {
 export const NoticeBoard: React.FC<{ notice: string }> = ({ notice }) => {
   if (!notice) return null;
   return (
-    <div className="relative overflow-hidden bg-white border border-gray-100 p-6 md:p-8 my-8 rounded-[32px] md:rounded-[40px] shadow-sm">
-      <div className="absolute top-0 right-0 p-8 opacity-[0.03] text-blue-600">
-        <BellRing size={120} />
+    <div className="relative overflow-hidden bg-white border border-gray-100 p-4 md:p-8 my-4 md:my-8 rounded-[24px] md:rounded-[40px] shadow-sm">
+      <div className="absolute top-0 right-0 p-4 md:p-8 opacity-[0.03] text-blue-600">
+        <BellRing size={80} className="md:w-[120px] md:h-[120px]" />
       </div>
-      <div className="flex items-start md:items-center gap-6 relative z-10">
-        <div className="bg-blue-600 p-4 rounded-2xl shadow-lg shadow-blue-100 flex-shrink-0">
+      <div className="flex items-start md:items-center gap-3 md:gap-6 relative z-10">
+        <div className="bg-blue-600 p-3 md:p-4 rounded-xl md:rounded-2xl shadow-lg shadow-blue-100 flex-shrink-0">
           <motion.div
             animate={{ scale: [1, 1.1, 1] }}
             transition={{ repeat: Infinity, duration: 2 }}
           >
-            <BellRing className="text-white" size={20} />
+            <BellRing className="text-white" size={16} md:size={20} />
           </motion.div>
         </div>
-        <div className="space-y-1">
-          <span className="text-[10px] font-black uppercase text-blue-600 tracking-[0.2em]">Official Update</span>
-          <p className="text-gray-900 font-bold text-base md:text-xl leading-tight md:leading-relaxed">
+        <div className="space-y-0.5 md:space-y-1">
+          <span className="text-[8px] md:text-[10px] font-black uppercase text-blue-600 tracking-[0.1em] md:tracking-[0.2em]">Official Update</span>
+          <p className="text-gray-900 font-bold text-sm md:text-xl leading-tight md:leading-relaxed">
             {notice}
           </p>
         </div>
